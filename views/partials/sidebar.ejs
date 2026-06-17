@@ -1,0 +1,73 @@
+<%
+const role = user ? user.role : null;
+const navItems = {
+  mahasiswa: [
+    { href: '/mahasiswa/dashboard',    icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6', label: 'Dashboard' },
+    { href: '/mahasiswa/submissions/create', icon: 'M12 4v16m8-8H4', label: 'Ajukan Pengunduran Diri' },
+    { href: '/mahasiswa/submissions',  icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z', label: 'Riwayat Pengajuan' },
+  ],
+  admin: [
+    { href: '/admin/dashboard',        icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6', label: 'Dashboard' },
+    { href: '/admin/submissions',      icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2', label: 'Daftar Pengajuan' },
+    { href: '/admin/students',         icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0', label: 'Data Mahasiswa' },
+  ],
+  kaprodi: [
+    { href: '/kaprodi/dashboard',      icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6', label: 'Dashboard' },
+    { href: '/kaprodi/submissions',    icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4', label: 'Pengajuan Terverifikasi' },
+  ],
+  dekan: [
+    { href: '/dekan/dashboard',        icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6', label: 'Dashboard' },
+    { href: '/dekan/submissions',      icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3-2v8m0 0l-2-2m2 2l2-2', label: 'Keputusan Akhir' },
+  ],
+};
+const items = navItems[role] || [];
+const safeCurrentPath = typeof currentPath !== 'undefined' ? currentPath : '';
+%>
+
+<aside class="app-sidebar">
+  <div class="app-sidebar-inner">
+
+    <div class="app-sidebar-header">
+      <div class="unand-brand">
+        <div class="unand-brand-mark">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+        </div>
+        <div class="unand-brand-text">
+          <span class="unand-brand-title">Universitas Andalas</span>
+          <span class="unand-brand-subtitle">Sistem Pengunduran Diri</span>
+        </div>
+      </div>
+    </div>
+
+    <nav class="app-sidebar-nav">
+      <ul class="app-sidebar-list">
+        <% items.forEach(item => { %>
+        <li>
+          <a href="<%= item.href %>"
+            class="app-sidebar-link <%= safeCurrentPath === item.href ? 'app-sidebar-link--active' : '' %>">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="<%= item.icon %>"/></svg>
+            <%= item.label %>
+          </a>
+        </li>
+        <% }) %>
+      </ul>
+
+      <div class="app-sidebar-footer">
+        <div class="app-sidebar-user">
+          <div class="app-sidebar-avatar">
+            <%= user ? user.name.charAt(0).toUpperCase() : '?' %>
+          </div>
+          <div class="app-sidebar-user-text">
+            <p class="app-sidebar-user-name"><%= user ? user.name : '' %></p>
+            <p class="app-sidebar-user-role"><%= role %></p>
+          </div>
+        </div>
+        <a href="/logout" class="app-sidebar-link">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+          Keluar
+        </a>
+      </div>
+    </nav>
+
+  </div>
+</aside>

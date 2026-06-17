@@ -1,0 +1,35 @@
+<header class="app-topbar">
+  <button type="button" class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Buka menu navigasi">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
+  </button>
+
+  <div style="flex: 1; min-width: 0;">
+    <h1 class="app-topbar-title"><%= pageTitle %></h1>
+    <% if (typeof pageSubtitle !== 'undefined' && pageSubtitle) { %>
+    <p class="app-topbar-subtitle"><%= pageSubtitle %></p>
+    <% } %>
+  </div>
+</header>
+
+<div class="mobile-menu-overlay" id="mobile-menu-overlay"></div>
+
+<script>
+  (() => {
+    const btn = document.getElementById('mobile-menu-btn');
+    const overlay = document.getElementById('mobile-menu-overlay');
+    const sidebar = document.querySelector('.app-sidebar');
+    if (!btn || !overlay || !sidebar) return;
+
+    const close = () => {
+      sidebar.classList.remove('app-sidebar--mobile-open');
+      overlay.classList.remove('mobile-menu-overlay--open');
+    };
+    const open = () => {
+      sidebar.classList.add('app-sidebar--mobile-open');
+      overlay.classList.add('mobile-menu-overlay--open');
+    };
+
+    btn.addEventListener('click', open);
+    overlay.addEventListener('click', close);
+  })();
+</script>

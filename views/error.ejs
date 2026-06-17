@@ -1,3 +1,25 @@
-<h1><%= message %></h1>
-<h2><%= error.status %></h2>
-<pre><%= error.stack %></pre>
+<!doctype html>
+<html lang="id">
+  <head>
+    <%- include('partials/head', { title: 'Terjadi Kesalahan' }) %>
+  </head>
+  <body>
+    <div class="error-shell">
+      <div class="error-card">
+        <div class="error-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <h1 class="error-title"><%= error && error.status ? error.status : 'Error' %></h1>
+        <p class="error-message"><%= message %></p>
+
+        <% if (typeof error !== 'undefined' && error.stack && process.env.NODE_ENV !== 'production') { %>
+        <pre class="error-stack"><%= error.stack %></pre>
+        <% } %>
+
+        <a href="/" class="btn-primary mt-4">
+          Kembali ke Beranda
+        </a>
+      </div>
+    </div>
+  </body>
+</html>
