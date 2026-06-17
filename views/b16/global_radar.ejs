@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8"><title>Radar Pelacakan Berkas Global</title>
+    <link rel="stylesheet" href="https://unpkg.com/@basecoat/basecoat/dist/basecoat.min.css">
+    <style>body{padding:2rem;}</style>
+</head>
+<body>
+    <div class="container">
+        <h2>🔍 Fitur 8: Sistem Radar Pelacakan Berkas Terintegrasi</h2>
+        
+        <form action="/b16/radar" method="GET" style="display:flex; gap:10px; margin-bottom:2rem;">
+            <input type="text" name="search" placeholder="Cari Nama / NIM / Judul / No SK..." value="<%= search %>" class="form-control">
+            <select name="status" class="form-control">
+                <option value="">-- Semua Status --</option>
+                <option value="Menunggu Review Kaprodi" <%= status === 'Menunggu Review Kaprodi' ? 'selected' : '' %>>Menunggu Review Kaprodi</option>
+                <option value="Disetujui Kaprodi" <%= status === 'Disetujui Kaprodi' ? 'selected' : '' %>>Disetujui Kaprodi</option>
+                <option value="Disetujui WD1 (Selesai)" <%= status === 'Disetujui WD1 (Selesai)' ? 'selected' : '' %>>Disetujui WD1 (Selesai)</option>
+                <option value="Ditolak" <%= status === 'Ditolak' ? 'selected' : '' %>>Ditolak</option>
+            </select>
+            <button type="submit" class="btn btn-primary">Filter Radar</button>
+        </form>
+
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Pemohon</th>
+                    <th>Perihal</th>
+                    <th>Status</th>
+                    <th>Nomor SK Resmi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% records.forEach(row => { %>
+                    <tr>
+                        <td><b><%= row.student_name %></b><br><%= row.student_nim %></td>
+                        <td><b><%= row.title %></b><br><small><%= row.description %></small></td>
+                        <td><%= row.status %></td>
+                        <td><mark><%= row.nomor_sk || 'Belum Terbit' %></mark></td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

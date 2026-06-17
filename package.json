@@ -11,12 +11,17 @@
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
     "dotenv": "^17.4.2",
-    "ejs": "~2.6.1",
-    "express": "~4.16.1",
+    "ejs": "^6.0.1",
+    "express": "^4.22.2",
     "express-mysql-session": "^3.0.3",
     "express-session": "^1.19.0",
+    "express-validator": "^7.3.2",
     "http-errors": "~1.6.3",
-    "morgan": "~1.9.1",
-    "mysql2": "^3.22.3"
+    "morgan": "^1.11.0",
+    "mysql2": "^3.22.3",
+    "nodemailer": "^9.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
   }
 }

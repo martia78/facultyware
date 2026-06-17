@@ -41,8 +41,16 @@ app.use(session({
   }
 }));
 
-app.use('/', indexRouter);
+// 1. First, require the routers (Initialize them)
+const dashboardController = require('./controllers/dashboardController');
+const b16Router = require('./routes/b16Routes');
+
+// 2. Then, tell the app to use them
+app.use('/b16', b16Router);
+app.get('/', dashboardController.index);
+
 app.use('/users', usersRouter);
+
 
 // catch 404 and forward to error handler
 app.use(notFoundHandler);
