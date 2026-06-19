@@ -22,6 +22,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // ─── Session dengan MySQL store ───────────────────────────
 const sessionStore = new MySQLStore({
@@ -59,13 +60,13 @@ app.use((req, res, next) => {
 
 // ─── Routes ───────────────────────────────────────────────
 app.use('/', indexRouter);
-app.use('/api', require('./routes/api'));
-// Routes per role (akan ditambahkan pada fase berikutnya)
+app.use('/api',       require('./routes/api'));
+
+// Routes per role
 app.use('/mahasiswa', require('./routes/mahasiswa'));
 app.use('/admin',     require('./routes/admin'));
 app.use('/kaprodi',   require('./routes/kaprodi'));
 app.use('/dekan',     require('./routes/dekan'));
-app.use('/api',       require('./routes/api'));
 
 // ─── Error handler ────────────────────────────────────────
 app.use(notFoundHandler);
