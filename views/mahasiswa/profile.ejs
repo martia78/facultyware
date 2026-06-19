@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <%- include('../partials/head', { title: pageTitle }) %>
+  </head>
+  <body class="page-shell">
+    <%- include('../partials/sidebar') %>
+
+    <div class="app-main">
+      <%- include('../partials/topbar') %>
+
+      <main class="app-content">
+        <div class="content-narrow">
+
+          <% if (!student) { %>
+          <div class="dash-card">
+            <div class="dash-card-body" style="padding-top:1.25rem;">
+              <div class="empty-state">
+                <h3 class="empty-state-title">Data profil tidak ditemukan</h3>
+                <p class="empty-state-desc">Hubungi admin fakultas jika ini tidak sesuai.</p>
+              </div>
+            </div>
+          </div>
+          <% } else { %>
+
+          <div class="dash-card">
+            <div class="dash-card-body" style="padding-top:1.5rem; display:flex; align-items:center; gap:1.25rem; flex-wrap:wrap;">
+              <div class="profile-avatar-lg">
+                <%= student.name ? student.name.charAt(0).toUpperCase() : '?' %>
+              </div>
+              <div>
+                <p style="margin:0; font-size:1.125rem; font-weight:800;"><%= student.name || '—' %></p>
+                <p style="margin:0.125rem 0 0; font-size:0.875rem; color:var(--muted-foreground);">
+                  <%= student.regno || (user ? user.username : '—') %> &middot; <%= student.department_name || '—' %>
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="dash-card">
+            <div class="dash-card-header">
+              <div class="dash-card-title-group">
+                <div class="dash-card-title-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M6 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg>
+                </div>
+                <h2 class="dash-card-title">Biodata Mahasiswa</h2>
+              </div>
+            </div>
+            <div class="dash-card-body">
+              <div class="profile-info-grid">
+                <div class="profile-info-item">
+                  <p class="profile-info-label">Nama Lengkap</p>
+                  <p class="profile-info-value"><%= student.name || '—' %></p>
+                </div>
+                <div class="profile-info-item">
+                  <p class="profile-info-label">NIM</p>
+                  <p class="profile-info-value"><%= student.regno || '—' %></p>
+                </div>
+                <div class="profile-info-item">
+                  <p class="profile-info-label">Program Studi</p>
+                  <p class="profile-info-value"><%= student.department_name || '—' %></p>
+                </div>
+                <div class="profile-info-item">
+                  <p class="profile-info-label">Fakultas</p>
+                  <p class="profile-info-value"><%= student.faculty_name || '—' %></p>
+                </div>
+                <div class="profile-info-item">
+                  <p class="profile-info-label">Email</p>
+                  <p class="profile-info-value"><%= student.campus_email || student.email || '—' %></p>
+                </div>
+                <div class="profile-info-item">
+                  <p class="profile-info-label">No. HP</p>
+                  <p class="profile-info-value"><%= student.phone_no || '—' %></p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <% } %>
+
+        </div>
+      </main>
+    </div>
+
+    <div id="toaster" class="toaster"></div>
+    <script src="/assets/js/basecoat.js"></script>
+  </body>
+</html>

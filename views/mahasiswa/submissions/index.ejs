@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <%- include('../../partials/head', { title: pageTitle }) %>
+  </head>
+  <body class="page-shell">
+    <%- include('../../partials/sidebar') %>
+
+    <div class="app-main">
+      <%- include('../../partials/topbar') %>
+
+      <main class="app-content">
+        <div class="content-narrow">
+
+          <%# Flash message %>
+          <% if (flash) { %>
+          <div class="alert alert--<%= flash.type === 'success' ? 'success' : 'danger' %> mb-5">
+            <%= flash.message %>
+          </div>
+          <% } %>
+
+          <div class="dash-card">
+            <div class="dash-card-header">
+              <div class="dash-card-title-group">
+                <div class="dash-card-title-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                </div>
+                <div>
+                  <h2 class="dash-card-title">Riwayat Pengajuan Pengunduran Diri</h2>
+                  <p class="dash-card-subtitle">Semua permohonan yang telah Anda buat.</p>
+                </div>
+              </div>
+              <a href="/mahasiswa/submissions/create" class="btn-primary-icon btn-primary-icon--sm">
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Buat Permohonan
+              </a>
+            </div>
+
+            <div class="dash-card-body">
+
+              <%# ── Searching ─────────────────────────────────────────────── %>
+              <form method="GET" action="/mahasiswa/submissions" class="search-toolbar">
+                <div class="search-input-wrap">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                  <input
+                    type="text"
+                    name="search"
+                    class="form-input search-input"
+                    placeholder="Cari berdasarkan nomor permohonan atau alasan..."
+                    value="<%= search %>"
+                  >
+                </div>
+                <button type="submit" class="btn-outline-icon">Cari</button>
+                <% if (search) { %>
+                <a href="/mahasiswa/submissions" class="btn-outline-icon">Reset</a>
+                <% } %>
+              </form>
+
+              <% if (submissions.length === 0) { %>
+              <div class="empty-state">
+                <div class="empty-state-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+                       stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                  </svg>
+                </div>
+                <% if (search) { %>
+                <h3 class="empty-state-title">Tidak ada hasil untuk &ldquo;<%= search %>&rdquo;</h3>
+                <p class="empty-state-desc">Coba kata kunci lain, atau <a href="/mahasiswa/submissions">lihat semua pengajuan</a>.</p>
+                <% } else { %>
+                <h3 class="empty-state-title">Belum ada pengajuan</h3>
+                <p class="empty-state-desc">Klik tombol di bawah untuk membuat permohonan baru.</p>
+                <a href="/mahasiswa/submissions/create" class="btn-primary-icon mt-4">Buat Permohonan Baru</a>
+                <% } %>
+              </div>
+              <% } else { %>
+              <div class="table-wrap">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>No. Permohonan</th>
+                      <th>Tanggal Pengajuan</th>
+                      <th>Status</th>
+                      <th style="width:1%;white-space:nowrap;"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% submissions.forEach(sub => { %>
+                    <tr>
+                      <td><code style="font-size:0.8125rem;"><%= sub.request_number %></code></td>
+                      <td>
+                        <%= sub.requested_at
+                              ? new Date(sub.requested_at).toLocaleDateString('id-ID', { day:'2-digit', month:'long', year:'numeric' })
+                              : '—' %>
+                      </td>
+                      <td>
+                        <span class="badge <%= STATUS_BADGE[sub.status] || 'badge--gray' %>">
+                          <%= STATUS_LABEL[sub.status] || sub.status %>
+                        </span>
+                      </td>
+                      <td>
+                        <a href="/mahasiswa/submissions/<%= sub.id %>" class="dash-table-detail-btn">
+                          Detail
+                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                        </a>
+                      </td>
+                    </tr>
+                    <% }) %>
+                  </tbody>
+                </table>
+              </div>
+
+              <%# ── Pagination ────────────────────────────────────────────── %>
+              <% if (totalPages > 1) { %>
+              <% const qs = (p) => `?page=${p}` + (search ? `&search=${encodeURIComponent(search)}` : ''); %>
+              <div class="pagination">
+                <div class="pagination-info">
+                  Menampilkan <%= (currentPage - 1) * limit + 1 %>&ndash;<%= Math.min(currentPage * limit, total) %> dari <%= total %> data
+                </div>
+                <div class="pagination-controls">
+                  <% if (currentPage > 1) { %>
+                  <a class="pagination-btn" href="<%= qs(currentPage - 1) %>">&lsaquo; Sebelumnya</a>
+                  <% } else { %>
+                  <span class="pagination-btn pagination-btn--disabled">&lsaquo; Sebelumnya</span>
+                  <% } %>
+                  <span class="pagination-current">Halaman <%= currentPage %> / <%= totalPages %></span>
+                  <% if (currentPage < totalPages) { %>
+                  <a class="pagination-btn" href="<%= qs(currentPage + 1) %>">Selanjutnya &rsaquo;</a>
+                  <% } else { %>
+                  <span class="pagination-btn pagination-btn--disabled">Selanjutnya &rsaquo;</span>
+                  <% } %>
+                </div>
+              </div>
+              <% } else { %>
+              <div class="pagination">
+                <div class="pagination-info">Menampilkan <%= submissions.length %> dari <%= total %> data</div>
+              </div>
+              <% } %>
+              <% } %>
+            </div>
+          </div>
+
+        </div>
+      </main>
+    </div>
+
+    <div id="toaster" class="toaster"></div>
+    <script src="/assets/js/basecoat.js"></script>
+  </body>
+</html>

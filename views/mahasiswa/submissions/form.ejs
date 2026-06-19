@@ -1,0 +1,519 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <%- include('../../partials/head', { title: pageTitle }) %>
+  </head>
+  <body class="page-shell">
+    <%- include('../../partials/sidebar') %>
+
+    <div class="app-main">
+      <%- include('../../partials/topbar') %>
+
+      <main class="app-content">
+        <div class="content-narrow">
+
+          <%# ── Breadcrumb ──────────────────────────────────────── %>
+          <nav class="form-breadcrumb" aria-label="Breadcrumb">
+            <a href="/mahasiswa/dashboard">Dashboard</a>
+            <span class="form-breadcrumb-sep">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </span>
+            <% if (submission && submission.id) { %>
+            <a href="/mahasiswa/submissions">Riwayat Pengajuan</a>
+            <span class="form-breadcrumb-sep">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </span>
+            <span class="form-breadcrumb-current"><%= readonly ? 'Detail Permohonan' : 'Edit Permohonan' %></span>
+            <% } else { %>
+            <a href="/mahasiswa/submissions/create">Buat Permohonan</a>
+            <span class="form-breadcrumb-sep">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </span>
+            <span class="form-breadcrumb-current">Formulir Pengajuan</span>
+            <% } %>
+          </nav>
+
+          <%# Flash %>
+          <% if (flash) { %>
+          <div class="alert alert--<%= flash.type === 'success' ? 'success' : 'danger' %>" style="margin-bottom:1.25rem;">
+            <%= flash.message %>
+          </div>
+          <% } %>
+
+          <%# Validation errors %>
+          <% if (errors && errors.length > 0) { %>
+          <div class="alert alert--danger" style="margin-bottom:1.25rem;">
+            <strong>Terdapat kesalahan pada formulir:</strong>
+            <ul>
+              <% errors.forEach(e => { %><li><%= e.msg %></li><% }) %>
+            </ul>
+          </div>
+          <% } %>
+
+          <%# Tracking Status (hanya untuk detail/show) %>
+          <% if (submission && submission.id && typeof timeline !== 'undefined') { %>
+          <div class="form-page-card mb-5">
+            <p class="form-section-heading" style="margin-top:0;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.12 15.88M14.47 14.48 20 20M8.12 8.12 12 12"/></svg>
+              Tracking Status Pengajuan
+            </p>
+            <%- include('../../partials/tracking', { timeline }) %>
+          </div>
+          <% } %>
+
+          <%# ══════════════ FORM CARD ══════════════ %>
+          <div class="form-page-card">
+
+            <div class="form-page-header">
+              <div class="form-page-header-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+              </div>
+              <div>
+                <h1 class="form-page-header-title">Formulir Pengajuan Pengunduran Diri</h1>
+                <% if (submission && submission.request_number) { %>
+                <p class="form-page-header-meta">Nomor Permohonan: <strong><code><%= submission.request_number %></code></strong></p>
+                <% } else { %>
+                <p class="form-page-header-desc">Lengkapi data berikut dengan benar dan lampirkan surat permohonan pengunduran diri.</p>
+                <% } %>
+              </div>
+            </div>
+
+            <form
+              method="POST"
+              action="<%= action %>"
+              enctype="multipart/form-data"
+              id="resignation-form"
+            >
+              <%# method override untuk PUT/DELETE %>
+              <% if (method && method !== 'GET' && method !== 'POST') { %>
+              <input type="hidden" name="_method" value="<%= method %>">
+              <% } %>
+
+              <%# ── 1. DATA MAHASISWA ─────────────────────────────────────── %>
+              <p class="form-section-heading">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M6 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg>
+                1. Data Mahasiswa
+              </p>
+              <div class="form-grid" style="margin-bottom:0.5rem;">
+
+                <div class="form-group">
+                  <label class="form-label">NIM</label>
+                  <input class="form-input" type="text" value="<%= student ? student.regno : (user ? user.username : '') %>" readonly>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Nama Lengkap</label>
+                  <input class="form-input" type="text" value="<%= student ? student.name : (user ? user.name : '') %>" readonly>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Program Studi</label>
+                  <input class="form-input" type="text" value="<%= student && student.department_name ? student.department_name : '—' %>" readonly>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="address">
+                    Alamat
+                    <% if (!readonly) { %><span class="required">*</span><% } %>
+                  </label>
+                  <% const addressVal = (submission && submission.student_address) ? submission.student_address : (submission && submission.address ? submission.address : ''); %>
+                  <textarea
+                    class="form-textarea <%= errors && errors.find(e=>e.field==='address') ? 'form-textarea--error' : '' %>"
+                    id="address"
+                    name="address"
+                    rows="2"
+                    placeholder="Masukkan alamat lengkap"
+                    <%= readonly ? 'readonly' : 'required' %>
+                  ><%= addressVal %></textarea>
+                  <% if (errors && errors.find(e => e.field === 'address')) { %>
+                  <span class="field-error"><%= errors.find(e => e.field === 'address').msg %></span>
+                  <% } %>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="phone">
+                    No. HP
+                    <% if (!readonly) { %><span class="required">*</span><% } %>
+                  </label>
+                  <% const phoneVal = (submission && submission.student_hp) ? submission.student_hp : (student ? (student.phone_no || '') : ''); %>
+                  <input
+                    class="form-input <%= errors && errors.find(e=>e.field==='phone') ? 'form-input--error' : '' %>"
+                    type="text"
+                    id="phone"
+                    name="phone"
+                    value="<%= phoneVal %>"
+                    placeholder="Masukkan nomor HP aktif"
+                    <%= readonly ? 'readonly' : 'required' %>
+                  >
+                  <% if (errors && errors.find(e => e.field === 'phone')) { %>
+                  <span class="field-error"><%= errors.find(e => e.field === 'phone').msg %></span>
+                  <% } %>
+                </div>
+
+              </div>
+
+              <%# ── 2. DATA AKADEMIK ─────────────────────────────────────── %>
+              <p class="form-section-heading">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg>
+                2. Data Akademik
+              </p>
+              <div class="form-grid" style="margin-bottom:0.5rem;">
+
+                <div class="form-group">
+                  <label class="form-label" for="gpa">
+                    IPK Saat Ini
+                    <% if (!readonly) { %><span class="required">*</span><% } %>
+                  </label>
+                  <% const gpaVal = (submission && submission.gpa !== undefined && submission.gpa !== null) ? submission.gpa : ''; %>
+                  <input
+                    class="form-input <%= errors && errors.find(e=>e.field==='gpa') ? 'form-input--error' : '' %>"
+                    type="number" step="0.01" min="0" max="4"
+                    id="gpa"
+                    name="gpa"
+                    value="<%= gpaVal %>"
+                    placeholder="Contoh: 3.45"
+                    <%= readonly ? 'readonly' : 'required' %>
+                  >
+                  <% if (errors && errors.find(e => e.field === 'gpa')) { %>
+                  <span class="field-error"><%= errors.find(e => e.field === 'gpa').msg %></span>
+                  <% } %>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="total_sks">
+                    Jumlah SKS yang Telah Ditempuh
+                    <% if (!readonly) { %><span class="required">*</span><% } %>
+                  </label>
+                  <% const sksVal = (submission && submission.total_sks !== undefined && submission.total_sks !== null) ? submission.total_sks : ''; %>
+                  <input
+                    class="form-input <%= errors && errors.find(e=>e.field==='total_sks') ? 'form-input--error' : '' %>"
+                    type="number" min="0" step="1"
+                    id="total_sks"
+                    name="total_sks"
+                    value="<%= sksVal %>"
+                    placeholder="Contoh: 118"
+                    <%= readonly ? 'readonly' : 'required' %>
+                  >
+                  <% if (errors && errors.find(e => e.field === 'total_sks')) { %>
+                  <span class="field-error"><%= errors.find(e => e.field === 'total_sks').msg %></span>
+                  <% } %>
+                </div>
+
+              </div>
+
+              <%# ── 3. DATA PERMOHONAN ─────────────────────────────────────── %>
+              <p class="form-section-heading">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                3. Data Permohonan
+              </p>
+              <div class="form-grid" style="margin-bottom:0.5rem;">
+
+                <div class="form-group">
+                  <label class="form-label" for="reason">
+                    Alasan Pengunduran Diri
+                    <% if (!readonly) { %><span class="required">*</span><% } %>
+                  </label>
+                  <% const reasonVal = (submission && (submission.reason || submission.description)) ? (submission.reason || submission.description) : ''; %>
+                  <textarea
+                    class="form-textarea <%= errors && errors.find(e=>e.field==='reason') ? 'form-textarea--error' : '' %>"
+                    id="reason"
+                    name="reason"
+                    rows="4"
+                    maxlength="255"
+                    placeholder="Jelaskan alasan pengunduran diri Anda secara singkat (maks. 255 karakter)"
+                    <%= readonly ? 'readonly' : 'required' %>
+                  ><%= reasonVal %></textarea>
+                  <% if (!readonly) { %>
+                  <span class="char-counter" id="reason-counter"><%= reasonVal.length %>/255 karakter</span>
+                  <% } %>
+                  <% if (errors && errors.find(e => e.field === 'reason')) { %>
+                  <span class="field-error"><%= errors.find(e => e.field === 'reason').msg %></span>
+                  <% } %>
+                </div>
+
+                <%# Surat Permohonan (wajib, satu-satunya dokumen) %>
+                <div class="form-group">
+                  <label class="form-label" for="application_letter">
+                    Surat Permohonan (PDF)
+                    <% if (!readonly) { %><span class="required">*</span><% } %>
+                  </label>
+
+                  <% const hasFile = submission && submission.application_letter_file; %>
+
+                  <% if (hasFile) { %>
+                  <div class="existing-file" id="app-letter-current">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    <span>File saat ini: <strong><%= submission.application_letter_file %></strong></span>
+                    <a href="/mahasiswa/submissions/<%= submission.id %>/document" target="_blank" rel="noopener" class="existing-file-link">Lihat</a>
+                    <% if (!readonly) { %>
+                    <button type="button" class="btn-outline-icon btn-outline-icon--sm" id="btn-ganti-file">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0115-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 01-15 6.7L3 16"/></svg>
+                      Ganti File
+                    </button>
+                    <% } %>
+                  </div>
+                  <% } %>
+
+                  <% if (!readonly) { %>
+                  <div id="app-letter-upload-area" <% if (hasFile) { %>style="display:none;"<% } %>>
+                    <label class="upload-dropzone" for="application_letter" id="app-letter-dropzone">
+                      <div class="upload-dropzone-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                      </div>
+                      <p class="upload-dropzone-text">Klik atau drag file PDF di sini</p>
+                      <p class="upload-dropzone-hint">Maks. 5 MB</p>
+                      <p class="upload-dropzone-filename" id="app-letter-name"></p>
+                    </label>
+                    <input
+                      class="file-input-hidden"
+                      type="file"
+                      id="application_letter"
+                      name="application_letter"
+                      accept="application/pdf,.pdf"
+                      <% if (!hasFile) { %>required<% } %>
+                      onchange="updateFileName(this, 'app-letter-name', 'app-letter-dropzone', 5)"
+                    >
+                    <% if (hasFile) { %>
+                    <button type="button" class="btn-outline-icon btn-outline-icon--sm mt-2" id="btn-batal-ganti">
+                      Batal, gunakan file sebelumnya
+                    </button>
+                    <% } %>
+                    <span class="form-hint">Lampirkan surat permohonan pengunduran diri yang ditujukan kepada Dekan. Saat file baru diunggah, file sebelumnya otomatis digantikan.</span>
+                  </div>
+                  <% } %>
+
+                  <% if (errors && errors.find(e => e.field === 'application_letter')) { %>
+                  <span class="field-error"><%= errors.find(e => e.field === 'application_letter').msg %></span>
+                  <% } %>
+                </div>
+
+              </div>
+
+              <%# ACTION BUTTONS %>
+              <div class="form-actions-row">
+                <% if (!readonly) { %>
+                  <%# Create mode %>
+                  <% if (!submission || !submission.id) { %>
+                  <a href="/mahasiswa/submissions" class="btn-outline-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    Batal
+                  </a>
+                  <button type="submit" class="btn-primary-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                    Simpan Permohonan
+                  </button>
+                  <% } else { %>
+                  <%# Edit mode (submission ada, masih Draft) %>
+                  <a href="/mahasiswa/submissions/<%= submission.id %>" class="btn-outline-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    Batal
+                  </a>
+                  <button type="submit" class="btn-primary-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                    Simpan Perubahan
+                  </button>
+                  <% } %>
+                <% } else { %>
+                  <%# Read-only / show mode %>
+                  <a href="/mahasiswa/submissions" class="btn-outline-icon">Kembali ke Daftar</a>
+                  <% if (submission && submission.status === STATUS.DRAFT) { %>
+                  <button type="button" class="btn-danger-icon" onclick="document.getElementById('dialog-delete').showModal()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
+                    Hapus Draft
+                  </button>
+                  <a href="/mahasiswa/submissions/<%= submission.id %>/edit" class="btn-outline-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    Edit
+                  </a>
+                  <button type="button" class="btn-primary-icon" onclick="document.getElementById('dialog-submit').showModal()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                    Ajukan Permohonan
+                  </button>
+                  <% } %>
+                  <% if (submission && submission.status === STATUS.DISETUJUI_FINAL) { %>
+                  <a href="/mahasiswa/submissions/<%= submission.id %>/pdf" class="btn-primary-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    Export SK PDF
+                  </a>
+                  <% } %>
+                <% } %>
+              </div>
+
+            </form>
+
+            <%# ── Dialog konfirmasi: Hapus Draft (checkbox wajib dicentang) ──── %>
+            <% if (submission && submission.status === STATUS.DRAFT) { %>
+            <dialog class="dialog" id="dialog-delete">
+              <article>
+                <header>
+                  <h2>Hapus Draft Permohonan?</h2>
+                </header>
+                <section>
+                  <p>Apakah Anda yakin ingin menghapus draft ini?</p>
+                  <p class="dialog-warning-text">Tindakan ini tidak dapat dibatalkan.</p>
+                  <label class="confirm-checkbox-row">
+                    <input type="checkbox" id="confirm-delete-checkbox">
+                    <span>Saya memahami bahwa draft yang dihapus tidak dapat dipulihkan kembali.</span>
+                  </label>
+                </section>
+                <footer>
+                  <button type="button" class="btn-outline-icon" onclick="document.getElementById('dialog-delete').close()">Batal</button>
+                  <form method="POST" action="/mahasiswa/submissions/<%= submission.id %>/delete">
+                    <button type="submit" class="btn-danger-icon" id="confirm-delete-btn" disabled>Ya, Hapus Draft</button>
+                  </form>
+                </footer>
+              </article>
+            </dialog>
+
+            <%# ── Dialog konfirmasi: Ajukan Permohonan ────────────────────────── %>
+            <dialog class="dialog" id="dialog-submit">
+              <article>
+                <header>
+                  <h2>Perhatian!</h2>
+                </header>
+                <section>
+                  <p>Setelah permohonan diajukan, data tidak dapat diubah kembali.</p>
+                  <p class="dialog-note">Pastikan seluruh informasi telah benar.</p>
+                </section>
+                <footer>
+                  <button type="button" class="btn-outline-icon" onclick="document.getElementById('dialog-submit').close()">Batal</button>
+                  <form method="POST" action="/mahasiswa/submissions/<%= submission.id %>/submit">
+                    <button type="submit" class="btn-primary-icon">Ya, Ajukan Permohonan</button>
+                  </form>
+                </footer>
+              </article>
+            </dialog>
+            <% } %>
+          </div>
+
+        </div>
+
+        <%# Approval history %>
+        <% if (typeof history !== 'undefined' && history && history.length > 0) { %>
+        <div class="content-narrow" style="margin-top:1.5rem;">
+          <div class="form-page-card">
+            <p class="form-section-heading" style="margin-top:0;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              Riwayat Persetujuan
+            </p>
+            <% history.forEach(h => { %>
+            <div style="padding:.75rem;border:1px solid var(--border);border-radius:.625rem;margin-bottom:.625rem;display:flex;gap:.75rem;flex-wrap:wrap;align-items:flex-start;">
+              <span class="badge badge--blue"><%= h.level %></span>
+              <div style="flex:1;min-width:0;">
+                <strong style="font-size:.9rem;"><%= h.approver_name || 'Unknown' %></strong>
+                <span style="font-size:.8rem;color:var(--muted-foreground);"> — <%= h.approval_position %></span>
+                <% if (h.approval_reason) { %><p style="margin:.25rem 0 0;font-size:.875rem;"><%= h.approval_reason %></p><% } %>
+              </div>
+              <span style="font-size:.8rem;color:var(--muted-foreground);">
+                <%= h.created_at ? new Date(h.created_at).toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'}) : '' %>
+              </span>
+            </div>
+            <% }) %>
+          </div>
+        </div>
+        <% } %>
+
+      </main>
+    </div>
+
+    <div id="toaster" class="toaster"></div>
+    <script src="/assets/js/basecoat.js"></script>
+    <script>
+      function updateFileName(input, displayId, dropzoneId, maxMB) {
+        const display  = document.getElementById(displayId);
+        const dropzone = document.getElementById(dropzoneId);
+        if (!display) return;
+        if (input.files && input.files.length > 0) {
+          const file = input.files[0];
+          const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+          display.textContent = `${file.name} (${sizeMB} MB)`;
+          if (maxMB && file.size > maxMB * 1024 * 1024) {
+            display.style.color = 'var(--destructive)';
+            display.textContent += ` — Melebihi batas ${maxMB} MB!`;
+          } else {
+            display.style.color = '';
+          }
+        } else {
+          display.textContent = '';
+        }
+      }
+
+      // Drag-and-drop visual feedback untuk dropzone
+      document.querySelectorAll('.upload-dropzone').forEach((zone) => {
+        ['dragenter', 'dragover'].forEach(evt => {
+          zone.addEventListener(evt, (e) => { e.preventDefault(); zone.classList.add('upload-dropzone--drag'); });
+        });
+        ['dragleave', 'drop'].forEach(evt => {
+          zone.addEventListener(evt, (e) => { e.preventDefault(); zone.classList.remove('upload-dropzone--drag'); });
+        });
+        zone.addEventListener('drop', (e) => {
+          const input = document.getElementById(zone.getAttribute('for'));
+          if (input && e.dataTransfer.files.length > 0) {
+            input.files = e.dataTransfer.files;
+            input.dispatchEvent(new Event('change'));
+          }
+        });
+      });
+
+      // Client-side validation sebelum submit
+      document.getElementById('resignation-form')?.addEventListener('submit', function(e) {
+        const reason = document.getElementById('reason');
+        if (reason && !reason.hasAttribute('readonly') && !reason.value.trim()) {
+          e.preventDefault();
+          reason.focus();
+          reason.classList.add('form-textarea--error');
+          alert('Alasan pengunduran diri wajib diisi.');
+        }
+      });
+
+      // Counter karakter untuk textarea Alasan Pengunduran Diri (maks. 255)
+      (() => {
+        const reason  = document.getElementById('reason');
+        const counter = document.getElementById('reason-counter');
+        if (!reason || !counter) return;
+        reason.addEventListener('input', () => {
+          counter.textContent = `${reason.value.length}/255 karakter`;
+          counter.classList.toggle('char-counter--limit', reason.value.length >= 255);
+        });
+      })();
+
+      // Tombol "Ganti File" — sembunyikan info file lama, tampilkan area unggah baru.
+      (() => {
+        const btnGanti = document.getElementById('btn-ganti-file');
+        const btnBatal = document.getElementById('btn-batal-ganti');
+        const currentBox = document.getElementById('app-letter-current');
+        const uploadArea = document.getElementById('app-letter-upload-area');
+        const fileInput  = document.getElementById('application_letter');
+        const fileNameEl = document.getElementById('app-letter-name');
+
+        if (btnGanti) {
+          btnGanti.addEventListener('click', () => {
+            if (currentBox) currentBox.style.display = 'none';
+            if (uploadArea) uploadArea.style.display = '';
+          });
+        }
+        if (btnBatal) {
+          btnBatal.addEventListener('click', () => {
+            if (fileInput) fileInput.value = '';
+            if (fileNameEl) fileNameEl.textContent = '';
+            if (uploadArea) uploadArea.style.display = 'none';
+            if (currentBox) currentBox.style.display = '';
+          });
+        }
+      })();
+
+      // Dialog "Hapus Draft" — tombol konfirmasi hanya aktif setelah checkbox dicentang.
+      (() => {
+        const checkbox = document.getElementById('confirm-delete-checkbox');
+        const confirmBtn = document.getElementById('confirm-delete-btn');
+        const dialog = document.getElementById('dialog-delete');
+        if (!checkbox || !confirmBtn) return;
+        checkbox.addEventListener('change', () => { confirmBtn.disabled = !checkbox.checked; });
+        // Reset checkbox setiap kali dialog dibuka kembali
+        if (dialog) {
+          dialog.addEventListener('close', () => { checkbox.checked = false; confirmBtn.disabled = true; });
+        }
+      })();
+    </script>
+  </body>
+</html>

@@ -238,124 +238,7 @@
   color: var(--foreground);
 }
 
-/* --- Halaman login: shell penuh + card terpusat --- */
-.login-shell {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1.5rem;
-  background: #F8FAFC;
-}
 
-.login-card-wrap {
-  width: 100%;
-  max-width: 64rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.login-card {
-  display: flex;
-  flex-direction: column;
-  border-radius: var(--radius-xl, 0.75rem);
-  border: 1px solid var(--border);
-  background: var(--card);
-  color: var(--card-foreground);
-  overflow: hidden;
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-}
-
-.login-card-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-}
-
-.login-card-panel--hide-mobile {
-  display: none;
-}
-
-@media (min-width: 768px) {
-  .login-card-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-  .login-card-panel--hide-mobile {
-    display: flex;
-  }
-}
-
-.login-form-panel {
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-@media (min-width: 768px) {
-  .login-form-panel { padding: 2.5rem; }
-}
-
-.login-side-panel {
-  flex-direction: column;
-  justify-content: space-between;
-  background: var(--primary);
-  color: var(--primary-foreground);
-  padding: 2.5rem;
-  position: relative;
-  overflow: hidden;
-}
-
-.login-side-panel::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  opacity: 0.08;
-  background-image: radial-gradient(circle at 30% 20%, white 1px, transparent 1px);
-  background-size: 22px 22px;
-}
-
-.login-side-content {
-  position: relative;
-  z-index: 1;
-}
-
-.login-feature-list {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin-top: 2rem;
-  list-style: none;
-  padding: 0;
-}
-
-.login-feature-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.75rem;
-}
-
-.login-feature-bullet {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 1.75rem;
-  height: 1.75rem;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.15);
-  flex-shrink: 0;
-}
-
-.login-footer-note {
-  font-size: 0.75rem;
-  text-align: center;
-  color: var(--muted-foreground);
-  padding: 0 1.5rem;
-}
-
-/* --- Form fields (dipakai bersama .form / .field bawaan Basecoat) --- */
 .form-row {
   display: flex;
   flex-direction: column;
@@ -650,7 +533,7 @@
 .table-wrap {
   border: 1px solid var(--border);
   border-radius: var(--radius-lg, 0.625rem);
-  overflow: hidden;
+  overflow-x: auto;
 }
 
 .text-center { text-align: center; }
@@ -712,3 +595,1224 @@
   padding: 1rem;
   overflow-x: auto;
 }
+
+/* =========================================================
+ * Halaman Login — kartu tunggal terpusat di atas foto kampus
+ * Foto latar dibuat sangat pudar (lihat .login-page::before/::after)
+ * supaya kartu putih jadi fokus utama. Untuk mengganti foto, cukup
+ * ubah url() di .login-page::before.
+ * ========================================================= */
+
+.login-page {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 1.25rem;
+}
+
+.login-page::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: url('/assets/images/login-hero.jpg');
+  background-size: cover;
+  background-position: center 60%;
+  background-repeat: no-repeat;
+}
+
+.login-page::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.login-card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 26rem;
+  background: #FFFFFF;
+  border-radius: 1.25rem;
+  box-shadow: 0 20px 45px rgba(15, 46, 20, 0.16), 0 2px 10px rgba(15, 46, 20, 0.08);
+  padding: 2.25rem 2.25rem;
+}
+
+.login-card-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+}
+
+.login-card-logo img {
+  display: block;
+  width: auto;
+  height: 4.25rem;
+}
+
+.login-card-title {
+  margin: 0;
+  font-size: 1.0625rem;
+  font-weight: 800;
+  line-height: 1.35;
+  text-align: center;
+  color: #14201A;
+}
+
+.login-card-university {
+  margin: 0.25rem 0 0;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  text-align: center;
+  color: var(--muted-foreground);
+}
+
+.login-card-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 1.25rem 0 1.25rem;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.login-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.login-field-label {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #14201A;
+}
+
+.login-input-wrap {
+  position: relative;
+  display: flex;
+}
+
+.login-input {
+  width: 100%;
+  height: 2.625rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--input);
+  background: #F8FAFC;
+  padding: 0 0.875rem;
+  font-size: 0.875rem;
+  color: #14201A;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.login-input::placeholder {
+  color: #9AA8A4;
+}
+
+.login-input:focus {
+  outline: none;
+  border-color: var(--unand-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--unand-accent) 22%, transparent);
+  background: #FFFFFF;
+}
+
+.login-input--password {
+  padding-right: 2.5rem;
+}
+
+.login-input-toggle {
+  position: absolute;
+  right: 0.625rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border: none;
+  background: transparent;
+  color: #94A3A0;
+  cursor: pointer;
+  border-radius: 0.375rem;
+}
+
+.login-input-toggle:hover {
+  color: #5B6B68;
+}
+
+.login-submit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 2.75rem;
+  border: none;
+  border-radius: 0.5rem;
+  background: linear-gradient(135deg, var(--unand-primary), var(--unand-secondary));
+  color: #FFFFFF;
+  font-size: 0.875rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(27, 94, 32, 0.28);
+  transition: filter 0.15s, transform 0.05s;
+  margin-top: 0.25rem;
+}
+
+.login-submit-btn:hover { filter: brightness(1.06); }
+.login-submit-btn:active { transform: translateY(1px); }
+
+.login-card-roles-label {
+  margin: 0 0 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--muted-foreground);
+}
+
+.login-card-roles {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.login-role-mini {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  color: #3F4F49;
+}
+
+.login-role-mini svg {
+  color: #5B6B68;
+}
+
+.login-role-mini-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: #3F4F49;
+}
+
+.login-card-footer {
+  position: relative;
+  z-index: 1;
+  margin-top: 1.25rem;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #2E3B36;
+  text-shadow: 0 1px 2px rgba(255,255,255,0.85), 0 1px 8px rgba(255,255,255,0.6);
+}
+/* =========================================================
+ * Badge status (.badge + .badge--warna)
+ * Sebelumnya class ini dipakai di beberapa view (mahasiswa/dashboard,
+ * submissions/index, submissions/form) tapi belum pernah didefinisikan
+ * di CSS manapun — jadi tampil polos tanpa warna. Ditambahkan di sini.
+ * ========================================================= */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.1875rem 0.625rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.badge::before {
+  content: "";
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 999px;
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+.badge--gray   { background: #EEF2F1; color: #5B6B68; }
+.badge--yellow { background: #FEF3E2; color: #B45309; }
+.badge--blue   { background: #E0F2FE; color: #0369A1; }
+.badge--green  { background: #E8F5E9; color: var(--unand-primary); }
+.badge--red    { background: #FEE2E2; color: #B91C1C; }
+
+/* =========================================================
+ * Sidebar — versi hijau gelap dengan branding kampus
+ * (override warna dasar dari definisi .app-sidebar di atas)
+ * ========================================================= */
+.app-sidebar {
+  background: linear-gradient(180deg, #1B5E20 0%, #133815 100%);
+  color: rgba(255, 255, 255, 0.92);
+  border-right: none;
+}
+
+.app-sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  height: auto;
+  padding: 1.5rem 0 1.125rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.app-sidebar-logo-img {
+  width: 2.625rem;
+  height: auto;
+  flex-shrink: 0;
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.25));
+}
+
+.app-sidebar-brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.app-sidebar-brand-title {
+  font-size: 0.9375rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  color: #FFFFFF;
+  text-transform: uppercase;
+}
+
+.app-sidebar-system-title {
+  margin: 1rem 0 0.25rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.app-sidebar-link {
+  color: rgba(255, 255, 255, 0.8);
+  position: relative;
+  z-index: 1;
+}
+
+.app-sidebar-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #FFFFFF;
+}
+
+.app-sidebar-link--active {
+  background: #FFFFFF;
+  color: var(--unand-primary);
+  font-weight: 700;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.18);
+}
+
+.app-sidebar-footer {
+  border-top: 1px solid rgba(255, 255, 255, 0.16);
+  position: relative;
+  z-index: 1;
+}
+
+.app-sidebar-nav {
+  position: relative;
+}
+
+.app-sidebar-decor {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 9rem;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.app-sidebar-decor svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* =========================================================
+ * Topbar — widget profil pengguna di kanan
+ * ========================================================= */
+.app-topbar-user {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  flex-shrink: 0;
+  text-decoration: none;
+  color: inherit;
+  padding: 0.25rem 0.375rem 0.25rem 0.625rem;
+  border-radius: 999px;
+  transition: background-color 0.15s;
+}
+
+.app-topbar-user:hover {
+  background: var(--muted);
+}
+
+.app-topbar-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.375rem;
+  height: 2.375rem;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--unand-primary);
+  font-size: 0.875rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  border: 2px solid #E8F5E9;
+}
+
+.app-topbar-user-text {
+  display: none;
+  line-height: 1.25;
+}
+
+@media (min-width: 480px) {
+  .app-topbar-user-text { display: block; }
+}
+
+.app-topbar-user-name {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--foreground);
+  white-space: nowrap;
+}
+
+.app-topbar-user-sub {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+  white-space: nowrap;
+}
+
+.app-topbar-user-chevron {
+  color: var(--muted-foreground);
+  flex-shrink: 0;
+}
+
+/* =========================================================
+ * Dashboard Mahasiswa — redesain
+ * ========================================================= */
+.dash-welcome-title {
+  margin: 0;
+  font-size: 1.375rem;
+  font-weight: 800;
+  color: var(--foreground);
+}
+
+.dash-welcome-sub {
+  margin: 0.25rem 0 0;
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+}
+
+.dash-stat-card {
+  border-radius: 1rem;
+  padding: 1.375rem 1.5rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.dash-stat-card--green {
+  background: linear-gradient(135deg, #EAF7EC, #E0F3E3);
+  border: 1px solid #CFEAD3;
+}
+
+.dash-stat-card--blue {
+  background: linear-gradient(135deg, #EAF2FE, #E1ECFD);
+  border: 1px solid #CEE0F9;
+}
+
+.dash-stat-label {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #3F4F49;
+  margin: 0 0 0.5rem;
+}
+
+.dash-stat-value {
+  font-size: 1.75rem;
+  font-weight: 800;
+  line-height: 1.1;
+  margin: 0 0 0.625rem;
+}
+
+.dash-stat-value--green { color: var(--unand-primary); }
+.dash-stat-value--blue  { color: #1D4ED8; }
+
+.dash-stat-pill {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.75);
+  color: #2E4A35;
+}
+
+.dash-stat-desc {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: #3F4F6B;
+}
+
+.dash-stat-icon-wrap {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.dash-stat-icon-wrap--green { background: #D7EEDB; color: var(--unand-primary); }
+.dash-stat-icon-wrap--blue  { background: #D5E4FC; color: #1D4ED8; }
+
+.dash-grid-main {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (min-width: 1024px) {
+  .dash-grid-main { grid-template-columns: 1.6fr 1fr; }
+}
+
+.dash-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.dash-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 1.25rem 1.25rem 1rem;
+  flex-wrap: wrap;
+}
+
+.dash-card-title-group {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.dash-card-title-icon {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent);
+  color: var(--unand-primary);
+  flex-shrink: 0;
+}
+
+.dash-card-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--foreground);
+}
+
+.dash-card-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--unand-primary);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.4rem 0.85rem;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+
+.dash-card-action:hover {
+  background: var(--accent);
+  border-color: var(--unand-accent);
+}
+
+.dash-card-body {
+  padding: 0 1.25rem 1.25rem;
+}
+
+.dash-card-footer-note {
+  padding: 0.875rem 1.25rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.8125rem;
+  color: var(--muted-foreground);
+  text-align: center;
+}
+
+.dash-card .table th,
+.dash-card .table td {
+  padding-block: 0.625rem;
+}
+
+.dash-col-stage {
+  white-space: normal !important;
+  max-width: 9rem;
+  line-height: 1.35;
+}
+
+.dash-table-detail-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--unand-primary);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.3rem 0.75rem;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+
+.dash-table-detail-btn:hover {
+  background: var(--accent);
+  border-color: var(--unand-accent);
+}
+
+/* ---------- Tracking timeline ---------- */
+.dash-timeline {
+  display: flex;
+  flex-direction: column;
+}
+
+.dash-timeline-step {
+  position: relative;
+  display: flex;
+  gap: 0.875rem;
+  padding-bottom: 1.75rem;
+}
+
+.dash-timeline-step:last-child {
+  padding-bottom: 0;
+}
+
+.dash-timeline-step:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  left: 1.0625rem;
+  top: 2.125rem;
+  bottom: 0;
+  width: 2px;
+  background: var(--border);
+}
+
+.dash-timeline-step--done:not(:last-child)::before {
+  background: var(--unand-accent);
+}
+
+.dash-timeline-dot {
+  width: 2.125rem;
+  height: 2.125rem;
+  border-radius: 999px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  position: relative;
+  z-index: 1;
+}
+
+.dash-timeline-dot--done      { background: var(--unand-primary); color: #FFFFFF; }
+.dash-timeline-dot--current   { background: #F2A93B; color: #FFFFFF; }
+.dash-timeline-dot--pending,
+.dash-timeline-dot--skipped   { background: var(--muted); color: var(--muted-foreground); border: 1px solid var(--border); }
+.dash-timeline-dot--rejected  { background: var(--destructive); color: #FFFFFF; }
+
+.dash-timeline-content {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding-top: 0.125rem;
+  min-width: 0;
+}
+
+.dash-timeline-title {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--foreground);
+}
+
+.dash-timeline-meta {
+  margin: 0.3rem 0 0;
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.dash-timeline-status-text {
+  margin: 0.3rem 0 0;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.dash-timeline-status-text--current  { color: #B45309; }
+.dash-timeline-status-text--pending  { color: var(--muted-foreground); font-weight: 600; }
+.dash-timeline-status-text--rejected { color: var(--destructive); }
+
+.dash-timeline-pill-done {
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--unand-primary);
+  background: #E8F5E9;
+  border-radius: 999px;
+  padding: 0.25rem 0.7rem;
+  white-space: nowrap;
+}
+
+.dash-timeline-pill-done--rejected {
+  color: #B91C1C;
+  background: #FEE2E2;
+}
+
+/* =========================================================
+ * Halaman Profil Mahasiswa
+ * ========================================================= */
+.profile-avatar-lg {
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--unand-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.625rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.profile-info-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .profile-info-grid { grid-template-columns: 1fr 1fr; }
+}
+
+.profile-info-label {
+  margin: 0 0 0.25rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted-foreground);
+}
+
+.profile-info-value {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+/* =========================================================
+ * Formulir Pengajuan Pengunduran Diri — redesain
+ * ========================================================= */
+.form-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  margin-bottom: 1.25rem;
+  color: var(--muted-foreground);
+  flex-wrap: wrap;
+}
+
+.form-breadcrumb a {
+  color: var(--unand-primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.form-breadcrumb a:hover { text-decoration: underline; }
+
+.form-breadcrumb-current {
+  color: var(--foreground);
+  font-weight: 600;
+}
+
+.form-breadcrumb-sep { color: var(--border); display: flex; }
+
+.form-page-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  padding: 1.75rem;
+}
+
+@media (max-width: 640px) {
+  .form-page-card { padding: 1.25rem; }
+}
+
+.form-page-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.875rem;
+  padding-bottom: 1.25rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.form-page-header-icon {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--unand-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.form-page-header-title {
+  margin: 0;
+  font-size: 1.1875rem;
+  font-weight: 800;
+  color: var(--foreground);
+}
+
+.form-page-header-desc {
+  margin: 0.25rem 0 0;
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+}
+
+.form-page-header-meta {
+  margin: 0.25rem 0 0;
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+}
+
+.form-section-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 2rem 0 1rem;
+  padding-bottom: 0.625rem;
+  border-bottom: 1px solid var(--border);
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--unand-primary);
+}
+
+.form-section-heading:first-of-type { margin-top: 0; }
+
+.form-section-heading svg { flex-shrink: 0; }
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.125rem 1.5rem;
+}
+
+@media (max-width: 640px) {
+  .form-grid { grid-template-columns: 1fr; }
+}
+
+.form-group { display: flex; flex-direction: column; gap: 0.375rem; }
+.form-group.span-2 { grid-column: span 2; }
+@media (max-width: 640px) { .form-group.span-2 { grid-column: span 1; } }
+
+.form-label {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--foreground);
+}
+
+.form-label .required { color: var(--destructive); margin-left: 2px; }
+
+.form-input, .form-textarea, .form-select {
+  padding: 0.625rem 0.875rem;
+  border: 1px solid var(--input);
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  background: #F8FAFC;
+  color: var(--foreground);
+  transition: border-color 0.15s, box-shadow 0.15s, background-color 0.15s;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.form-input::placeholder, .form-textarea::placeholder { color: #9AA8A4; }
+
+.form-input:focus, .form-textarea:focus, .form-select:focus {
+  outline: none;
+  border-color: var(--unand-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--unand-accent) 20%, transparent);
+  background: #FFFFFF;
+}
+
+.form-input[readonly], .form-textarea[readonly] {
+  background: var(--muted);
+  color: var(--muted-foreground);
+  cursor: default;
+}
+
+.form-textarea { resize: vertical; min-height: 100px; }
+
+.form-hint {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+}
+
+.field-error {
+  font-size: 0.75rem;
+  color: var(--destructive);
+  font-weight: 600;
+}
+
+.form-input--error, .form-textarea--error { border-color: var(--destructive); }
+
+/* ---------- Upload dropzone ---------- */
+.upload-dropzone {
+  position: relative;
+  display: block;
+  border: 1.5px dashed #BFE0C4;
+  border-radius: 0.75rem;
+  background: #F6FBF6;
+  padding: 1.5rem 1rem;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s, background-color 0.15s;
+}
+
+.upload-dropzone:hover,
+.upload-dropzone--drag {
+  border-color: var(--unand-accent);
+  background: #EEF8EF;
+}
+
+.upload-dropzone-icon {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 999px;
+  background: var(--unand-primary);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 0.625rem;
+}
+
+.upload-dropzone-text {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--foreground);
+}
+
+.upload-dropzone-hint {
+  margin: 0.25rem 0 0;
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+}
+
+.upload-dropzone-filename {
+  margin: 0.625rem auto 0;
+  max-width: 100%;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--unand-primary);
+  word-break: break-all;
+}
+
+.file-input-hidden { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+
+.existing-file {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  color: var(--muted-foreground);
+  background: var(--muted);
+  border-radius: 0.5rem;
+  padding: 0.625rem 0.75rem;
+  margin-bottom: 0.625rem;
+  flex-wrap: wrap;
+}
+
+.existing-file svg { flex-shrink: 0; color: var(--unand-primary); }
+.existing-file a { color: var(--unand-primary); font-weight: 600; }
+
+.doc-checklist-label {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  margin: 1rem 0 0.625rem;
+  color: var(--foreground);
+}
+
+.doc-checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4375rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.doc-checklist li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  color: var(--muted-foreground);
+}
+
+.doc-checklist svg { color: var(--unand-primary); flex-shrink: 0; }
+
+/* ---------- Status timeline (mode edit/detail) ---------- */
+.status-timeline {
+  display: flex;
+  gap: 0;
+  margin-bottom: 1.5rem;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.status-step {
+  flex: 1;
+  padding: 0.625rem 0.5rem;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: var(--muted);
+  color: var(--muted-foreground);
+  border-right: 1px solid var(--border);
+}
+
+.status-step:last-child { border-right: none; }
+
+.status-step--active { background: var(--unand-primary); color: #FFFFFF; }
+.status-step--done { background: #E8F5E9; color: var(--unand-primary); }
+.status-step--rejected { background: #FEE2E2; color: #991B1B; }
+
+/* ---------- Alerts ---------- */
+.alert { display: block; padding: 0.75rem 1rem; border-radius: 0.625rem; font-size: 0.875rem; }
+.alert--success { background: #E8F5E9; color: var(--unand-primary); border: 1px solid #CFEAD3; }
+.alert--danger  { background: #FEE2E2; color: #991B1B; border: 1px solid #FECACA; }
+.alert ul { margin: 0.375rem 0 0; padding-left: 1.25rem; }
+
+/* ---------- Action buttons ---------- */
+.form-actions-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border);
+}
+
+.btn-outline-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  background: #FFFFFF;
+  color: var(--foreground);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.15s;
+}
+
+.btn-outline-icon:hover { background: var(--muted); }
+
+.btn-primary-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.625rem 1.375rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--unand-primary), var(--unand-secondary));
+  color: #FFFFFF;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: 0 4px 12px rgba(27, 94, 32, 0.25);
+  transition: filter 0.15s;
+}
+
+.btn-primary-icon:hover { filter: brightness(1.06); }
+
+.btn-danger-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  background: #FFFFFF;
+  color: var(--destructive);
+  border: 1px solid #F3C9C6;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.15s;
+}
+
+.btn-danger-icon:hover { background: #FEE2E2; }
+
+/* ════════════════════════════════════════════════════════════════════════
+   Fitur Pengajuan Pengunduran Diri — komponen tambahan
+   ════════════════════════════════════════════════════════════════════════ */
+
+/* ---------- Informasi Mahasiswa bar (dashboard) ---------- */
+.student-info-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  background: #FFFFFF;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  padding: 0.875rem 1.25rem;
+  margin-bottom: 1.25rem;
+}
+.student-info-item { display: flex; flex-direction: column; gap: 0.125rem; }
+.student-info-label {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--muted-foreground);
+}
+.student-info-value { font-size: 0.9375rem; font-weight: 700; color: var(--foreground); }
+.student-info-divider { width: 1px; align-self: stretch; background: var(--border); }
+@media (max-width: 640px) { .student-info-divider { display: none; } }
+
+/* ---------- Char counter (textarea Alasan Pengunduran Diri) ---------- */
+.char-counter {
+  display: block;
+  text-align: right;
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+  margin-top: 0.25rem;
+}
+.char-counter--limit { color: var(--destructive); font-weight: 700; }
+
+/* ---------- Modifier tombol ukuran kecil (mis. "Ganti File") ---------- */
+.btn-outline-icon--sm, .btn-primary-icon--sm {
+  padding: 0.375rem 0.75rem;
+  font-size: 0.75rem;
+}
+
+/* ---------- Baris file terunggah: tautan "Lihat" rata kanan ---------- */
+.existing-file-link { margin-left: auto; }
+
+/* ---------- Dialog konfirmasi (Hapus Draft / Ajukan Permohonan) ---------- */
+.confirm-checkbox-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+.confirm-checkbox-row input[type="checkbox"] { margin-top: 0.2rem; flex-shrink: 0; }
+.dialog-warning-text { color: var(--destructive); font-weight: 700; margin-top: 0.25rem; }
+.dialog-note { margin-top: 0.25rem; }
+
+/* ---------- Search toolbar (Riwayat Pengajuan) ---------- */
+.search-toolbar {
+  display: flex;
+  gap: 0.625rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+}
+.search-input-wrap { position: relative; flex: 1; min-width: 220px; }
+.search-input-wrap svg {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted-foreground);
+  pointer-events: none;
+}
+.search-input { padding-left: 2.25rem; }
+
+/* ---------- Pagination ---------- */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+.pagination-info { font-size: 0.8125rem; color: var(--muted-foreground); }
+.pagination-controls { display: flex; align-items: center; gap: 0.75rem; }
+.pagination-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4375rem 0.875rem;
+  border-radius: 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  border: 1px solid var(--border);
+  background: #FFFFFF;
+  color: var(--foreground);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+.pagination-btn:hover { background: var(--muted); }
+.pagination-btn--disabled { opacity: 0.45; cursor: not-allowed; pointer-events: none; }
+.pagination-current { font-size: 0.8125rem; font-weight: 700; color: var(--foreground); }
+
+/* ---------- Kartu dashboard: subjudul kecil ---------- */
+.dash-card-subtitle { margin: 0.125rem 0 0; font-size: 0.8125rem; color: var(--muted-foreground); }
+
+/* ---------- Util margin kecil (dipakai terbatas, bukan pengganti util Tailwind) ---------- */
+.mb-5 { margin-bottom: 1.25rem; }
+.mt-2 { margin-top: 0.5rem; }

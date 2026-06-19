@@ -9,6 +9,17 @@
     <p class="app-topbar-subtitle"><%= pageSubtitle %></p>
     <% } %>
   </div>
+
+  <% if (typeof user !== 'undefined' && user) { %>
+  <a href="<%= user.role === 'mahasiswa' ? '/mahasiswa/profile' : '#' %>" class="app-topbar-user">
+    <span class="app-topbar-avatar"><%= user.name ? user.name.charAt(0).toUpperCase() : '?' %></span>
+    <span class="app-topbar-user-text">
+      <span class="app-topbar-user-name"><%= user.name %></span>
+      <span class="app-topbar-user-sub"><%= user.username %></span>
+    </span>
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="app-topbar-user-chevron"><polyline points="6 9 12 15 18 9"/></svg>
+  </a>
+  <% } %>
 </header>
 
 <div class="mobile-menu-overlay" id="mobile-menu-overlay"></div>

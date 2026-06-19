@@ -12,93 +12,163 @@
       <main class="app-content">
         <div class="content-narrow">
 
-          <section class="stat-grid stat-grid--3">
-            <div class="stat-card">
-              <div class="stat-card-row">
-                <div>
-                  <div class="stat-card-label">Status Pengajuan</div>
-                  <div class="stat-card-value" style="font-size: 1.125rem; margin-top: 0.25rem;">Belum Ada</div>
-                </div>
-                <div class="stat-card-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/></svg>
-                </div>
+          <div class="dash-welcome">
+            <h2 class="dash-welcome-title">Selamat datang, <%= user ? user.name : 'Mahasiswa' %>! 👋</h2>
+            <p class="dash-welcome-sub">Kelola pengajuan pengunduran diri Anda dengan mudah.</p>
+          </div>
+
+          <%# Flash %>
+          <% if (flash) { %>
+          <div class="alert alert--<%= flash.type === 'success' ? 'success' : 'danger' %> mb-5">
+            <%= flash.message %>
+          </div>
+          <% } %>
+
+          <%# ── Informasi Mahasiswa (Nama / NIM / Program Studi) ───────────── %>
+          <section class="student-info-bar">
+            <div class="student-info-item">
+              <span class="student-info-label">Nama Mahasiswa</span>
+              <span class="student-info-value"><%= student ? student.name : (user ? user.name : '—') %></span>
+            </div>
+            <div class="student-info-divider"></div>
+            <div class="student-info-item">
+              <span class="student-info-label">NIM</span>
+              <span class="student-info-value"><%= student ? student.regno : '—' %></span>
+            </div>
+            <div class="student-info-divider"></div>
+            <div class="student-info-item">
+              <span class="student-info-label">Program Studi</span>
+              <span class="student-info-value"><%= student && student.department_name ? student.department_name : '—' %></span>
+            </div>
+          </section>
+
+          <section class="stat-grid stat-grid--2">
+            <div class="dash-stat-card dash-stat-card--green">
+              <div>
+                <p class="dash-stat-label">Status Pengajuan</p>
+                <p class="dash-stat-value dash-stat-value--green">
+                  <%= latest ? (STATUS_HEADLINE[latest.status] || '—') : 'Belum Ada' %>
+                </p>
+                <% if (latest) { %>
+                <span class="dash-stat-pill"><%= STATUS_LABEL[latest.status] || '—' %></span>
+                <% } %>
+              </div>
+              <div class="dash-stat-icon-wrap dash-stat-icon-wrap--green">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12l2 2 4-4"/></svg>
               </div>
             </div>
 
-            <div class="stat-card">
-              <div class="stat-card-row">
-                <div>
-                  <div class="stat-card-label">Total Riwayat</div>
-                  <div class="stat-card-value">0</div>
-                </div>
-                <div class="stat-card-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                </div>
+            <div class="dash-stat-card dash-stat-card--blue">
+              <div>
+                <p class="dash-stat-label">Total Pengajuan</p>
+                <p class="dash-stat-value dash-stat-value--blue"><%= totalSubmissions %></p>
+                <p class="dash-stat-desc">Total semua pengajuan Anda</p>
               </div>
-            </div>
-
-            <div class="stat-card">
-              <div class="stat-card-row">
-                <div>
-                  <div class="stat-card-label">NIM</div>
-                  <div class="stat-card-value" style="font-size: 1.125rem; margin-top: 0.25rem;"><%= user ? user.username : '—' %></div>
-                </div>
-                <div class="stat-card-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M6 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg>
-                </div>
+              <div class="dash-stat-icon-wrap dash-stat-icon-wrap--blue">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
               </div>
             </div>
           </section>
 
-          <div class="card">
-            <header>
-              <h2>Pengajuan Pengunduran Diri</h2>
-              <p>Ajukan permohonan baru atau pantau status pengajuan Anda saat ini.</p>
-            </header>
-            <section>
+          <% if (!latest) { %>
+          <div class="dash-card">
+            <div class="dash-card-body" style="padding-top:1.25rem;">
               <div class="empty-state">
                 <div class="empty-state-icon">
                   <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16m8-8H4"/></svg>
                 </div>
                 <h3 class="empty-state-title">Anda belum memiliki pengajuan aktif</h3>
                 <p class="empty-state-desc">
-                  Jika Anda berniat mengundurkan diri, siapkan surat pernyataan dan dokumen pendukung dalam format PDF sebelum mengajukan.
+                  Jika Anda berniat mengundurkan diri, siapkan Surat Permohonan dalam format PDF (maks. 5 MB) sebelum mengajukan.
                 </p>
-                <a href="/mahasiswa/submissions/create" class="btn-primary mt-4">
-                  Ajukan Pengunduran Diri
+                <a href="/mahasiswa/submissions/create" class="btn-primary mt-4">Ajukan Pengunduran Diri</a>
+              </div>
+            </div>
+          </div>
+          <% } %>
+
+          <div class="dash-grid-main">
+
+            <div class="dash-card">
+              <div class="dash-card-header">
+                <div class="dash-card-title-group">
+                  <div class="dash-card-title-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                  </div>
+                  <h2 class="dash-card-title">Riwayat Pengajuan Terbaru</h2>
+                </div>
+                <a href="/mahasiswa/submissions" class="dash-card-action">
+                  Lihat Semua
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
                 </a>
               </div>
-            </section>
-          </div>
 
-          <div class="card">
-            <header>
-              <h2>Riwayat Pengajuan Terbaru</h2>
-              <p>Tiga pengajuan terakhir yang Anda kirimkan.</p>
-            </header>
-            <section>
-              <div class="table-wrap">
-                <table class="table">
-                  <thead>
-                    <tr>
-                      <th>Tanggal</th>
-                      <th>Status</th>
-                      <th></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td colspan="3" class="text-center text-muted-foreground" style="padding: 2rem 0;">
-                        Belum ada riwayat pengajuan.
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+              <div class="dash-card-body">
+                <div class="table-wrap">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>No Pengajuan</th>
+                        <th>Tanggal Pengajuan</th>
+                        <th>Status</th>
+                        <th>Tahap Saat Ini</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% if (recent3.length === 0) { %>
+                      <tr>
+                        <td colspan="5" class="text-center text-muted-foreground" style="padding:2rem 0;">
+                          Belum ada riwayat pengajuan.
+                        </td>
+                      </tr>
+                      <% } else { %>
+                      <% recent3.forEach(sub => { %>
+                      <tr>
+                        <td><code style="font-size:0.8125rem;"><%= sub.request_number %></code></td>
+                        <td>
+                          <%= sub.requested_at ? new Date(sub.requested_at).toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'}) : '—' %>
+                        </td>
+                        <td>
+                          <span class="badge <%= STATUS_BADGE[sub.status] || 'badge--gray' %>">
+                            <%= STATUS_HEADLINE[sub.status] || sub.status %>
+                          </span>
+                        </td>
+                        <td class="dash-col-stage"><%= CURRENT_STAGE[sub.status] || '—' %></td>
+                        <td style="text-align:right;">
+                          <a href="/mahasiswa/submissions/<%= sub.id %>" class="dash-table-detail-btn">
+                            Detail
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                          </a>
+                        </td>
+                      </tr>
+                      <% }) %>
+                      <% } %>
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            </section>
-            <footer>
-              <a href="/mahasiswa/submissions" class="btn-link" style="padding: 0;">Lihat semua riwayat &rarr;</a>
-            </footer>
+
+              <div class="dash-card-footer-note">
+                Menampilkan <%= recent3.length %> - <%= recent3.length %> dari <%= totalSubmissions %> data
+              </div>
+            </div>
+
+            <div class="dash-card" id="tracking">
+              <div class="dash-card-header">
+                <div class="dash-card-title-group">
+                  <div class="dash-card-title-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.12 15.88M14.47 14.48 20 20M8.12 8.12 12 12"/></svg>
+                  </div>
+                  <h2 class="dash-card-title">Tracking Status Pengajuan</h2>
+                </div>
+              </div>
+
+              <div class="dash-card-body">
+                <%- include('../partials/tracking', { timeline }) %>
+              </div>
+            </div>
+
           </div>
 
         </div>

@@ -3,8 +3,10 @@ const role = user ? user.role : null;
 const navItems = {
   mahasiswa: [
     { href: '/mahasiswa/dashboard',    icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6', label: 'Dashboard' },
-    { href: '/mahasiswa/submissions/create', icon: 'M12 4v16m8-8H4', label: 'Ajukan Pengunduran Diri' },
+    { href: '/mahasiswa/submissions/create', icon: 'M12 4v16m8-8H4', label: 'Buat Permohonan' },
     { href: '/mahasiswa/submissions',  icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z', label: 'Riwayat Pengajuan' },
+    { href: '/mahasiswa/dashboard#tracking', icon: 'M6 6m-3 0a3 3 0 106 0 3 3 0 10-6 0M6 18m-3 0a3 3 0 106 0 3 3 0 10-6 0M20 4 8.12 15.88M14.47 14.48 20 20M8.12 8.12 12 12', label: 'Tracking Pengajuan' },
+    { href: '/mahasiswa/profile',      icon: 'M12 12a4 4 0 100-8 4 4 0 000 8zM6 21v-2a4 4 0 014-4h4a4 4 0 014 4v2', label: 'Profil Mahasiswa' },
   ],
   admin: [
     { href: '/admin/dashboard',        icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6', label: 'Dashboard' },
@@ -28,16 +30,13 @@ const safeCurrentPath = typeof currentPath !== 'undefined' ? currentPath : '';
   <div class="app-sidebar-inner">
 
     <div class="app-sidebar-header">
-      <div class="unand-brand">
-        <div class="unand-brand-mark">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
-        </div>
-        <div class="unand-brand-text">
-          <span class="unand-brand-title">Universitas Andalas</span>
-          <span class="unand-brand-subtitle">Sistem Pengunduran Diri</span>
-        </div>
+      <img src="/assets/images/logo-unand.png" alt="Logo Universitas Andalas" class="app-sidebar-logo-img" />
+      <div class="app-sidebar-brand-text">
+        <span class="app-sidebar-brand-title">Universitas<br />Andalas</span>
       </div>
     </div>
+
+    <p class="app-sidebar-system-title">Sistem Pengajuan Pengunduran Diri Mahasiswa</p>
 
     <nav class="app-sidebar-nav">
       <ul class="app-sidebar-list">
@@ -52,16 +51,13 @@ const safeCurrentPath = typeof currentPath !== 'undefined' ? currentPath : '';
         <% }) %>
       </ul>
 
+      <div class="app-sidebar-decor" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 170" preserveAspectRatio="xMidYMax slice">
+          <path d="M0,170 L0,128 L22,108 Q30,62 38,108 L60,128 L82,108 Q92,40 102,108 L124,128 L146,104 Q158,30 170,104 L192,128 L214,108 Q224,54 234,108 L256,128 L278,112 Q286,70 294,112 L300,128 L300,170 Z" fill="#FFFFFF" opacity="0.07"/>
+        </svg>
+      </div>
+
       <div class="app-sidebar-footer">
-        <div class="app-sidebar-user">
-          <div class="app-sidebar-avatar">
-            <%= user ? user.name.charAt(0).toUpperCase() : '?' %>
-          </div>
-          <div class="app-sidebar-user-text">
-            <p class="app-sidebar-user-name"><%= user ? user.name : '' %></p>
-            <p class="app-sidebar-user-role"><%= role %></p>
-          </div>
-        </div>
         <a href="/logout" class="app-sidebar-link">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
           Keluar
