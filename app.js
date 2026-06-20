@@ -1,46 +1,63 @@
 require('dotenv').config();
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-var session = require('express-session');
-var MySQLStore = require('express-mysql-session')(session);
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+const express    = require('express');
+const path       = require('path');
+const cookieParser = require('cookie-parser');
+const logger     = require('morgan');
+const session    = require('express-session');
+const MySQLStore = require('express-mysql-session')(session);
+
+const indexRouter = require('./routes/index');
 const { notFoundHandler, errorHandler } = require('./middlewares/error');
 
-var app = express();
+const app = express();
 
-// view engine setup
+// ─── View engine ───────────────────────────────────────────
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
+// ─── Middleware umum ───────────────────────────────────────
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Session configuration
+// ─── Session dengan MySQL store ───────────────────────────
 const sessionStore = new MySQLStore({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
+  host:     process.env.DB_HOST     || 'localhost',
+  port:     process.env.DB_PORT     || 3306,
+  user:     process.env.DB_USER     || 'root',
+  password: process.env.DB_PASSWORD || '',
+  database: process.env.DB_NAME     || 'facultyware',
 });
 
 app.use(session({
-  key: 'session_cookie_name',
-  secret: process.env.SESSION_SECRET || 'secret',
-  store: sessionStore,
+  key:    'resign_sid',
+  secret: process.env.SESSION_SECRET || 'dev-secret-ganti-di-production',
+  store:  sessionStore,
   resave: false,
   saveUninitialized: false,
   cookie: {
-    maxAge: 1000 * 60 * 60 * 24 // 1 day
-  }
+    maxAge:   1000 * 60 * 60 * 8, // 8 jam
+    httpOnly: true,
+    secure:   process.env.NODE_ENV === 'production',
+  },
 }));
 
+// ─── Variabel global untuk semua view ─────────────────────
+app.use((req, res, next) => {
+  res.locals.user     = req.session.userId ? {
+    id:       req.session.userId,
+    username: req.session.username,
+    name:     req.session.name,
+    role:     req.session.role,
+  } : null;
+  res.locals.appName  = 'Sistem Pengunduran Diri';
+  next();
+});
+
+// ─── Routes ───────────────────────────────────────────────
 // 1. First, require the routers (Initialize them)
 const dashboardController = require('./controllers/dashboardController');
 const b16Router = require('./routes/b16Routes');
@@ -49,13 +66,17 @@ const b16Router = require('./routes/b16Routes');
 app.use('/b16', b16Router);
 app.get('/', dashboardController.index);
 
-app.use('/users', usersRouter);
+app.use('/api', require('./routes/api'));
+// Routes per role (akan ditambahkan pada fase berikutnya)
+app.use('/mahasiswa', require('./routes/mahasiswa'));
+app.use('/admin',     require('./routes/admin'));
+app.use('/kaprodi',   require('./routes/kaprodi'));
+app.use('/dekan',     require('./routes/dekan'));
+app.use('/api',       require('./routes/api'));
 
 
-// catch 404 and forward to error handler
+// ─── Error handler ────────────────────────────────────────
 app.use(notFoundHandler);
-
-// error handler
 app.use(errorHandler);
 
 module.exports = app;

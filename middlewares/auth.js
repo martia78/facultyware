@@ -1,11 +1,17 @@
-// Middleware to check if user is authenticated
+// Middleware: cek apakah user sudah login (session)
 function isAuthenticated(req, res, next) {
-  if (req.session.userId) {
+  if (req.session && req.session.userId) {
     return next();
   }
-  res.redirect("/login");
+  res.redirect('/login');
 }
 
-module.exports = {
-  isAuthenticated,
-};
+// Middleware: redirect ke dashboard jika sudah login
+function isGuest(req, res, next) {
+  if (req.session && req.session.userId) {
+    return res.redirect('/dashboard');
+  }
+  next();
+}
+
+module.exports = { isAuthenticated, isGuest };

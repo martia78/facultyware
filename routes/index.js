@@ -1,17 +1,17 @@
-var express = require("express");
-var router = express.Router();
-const indexController = require("../controllers/indexController");
-const { isAuthenticated } = require("../middlewares/auth");
+const express        = require('express');
+const router         = express.Router();
+const indexController = require('../controllers/indexController');
+const { isAuthenticated, isGuest } = require('../middlewares/auth');
 
-/* GET home page. */
-router.get("/", indexController.index);
+// Root
+router.get('/', indexController.index);
 
-router.get("/home", isAuthenticated, indexController.home);
+// Auth
+router.get('/login',    isGuest,         indexController.loginPage);
+router.post('/login',   isGuest,         indexController.login);
+router.get('/logout',   isAuthenticated, indexController.logout);
 
-router.get("/login", indexController.loginPage);
-
-router.post("/login", indexController.login);
-
-router.get("/logout", indexController.logout);
+// Dashboard router (redirect sesuai role)
+router.get('/dashboard', isAuthenticated, indexController.dashboard);
 
 module.exports = router;

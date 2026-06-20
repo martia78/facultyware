@@ -1,22 +1,26 @@
-var createError = require('http-errors');
+const createError = require('http-errors');
 
-// catch 404 and forward to error handler
+// 404 handler
 const notFoundHandler = (req, res, next) => {
   next(createError(404));
 };
 
-// error handler
+// Global error handler
 const errorHandler = (err, req, res, next) => {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+  const status  = err.status || 500;
+  const message = err.message || 'Terjadi kesalahan pada server';
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+  res.locals.message = message;
+  res.locals.error   = req.app.get('env') === 'development' ? err : {};
+
+  // Jika request API (Accept: application/json atau path /api/*)
+  if (req.xhr || req.path.startsWith('/api/') ||
+      req.headers.accept?.includes('application/json')) {
+    return res.status(status).json({ success: false, message });
+  }
+
+  res.status(status);
+  res.render('error', { message, error: res.locals.error });
 };
 
-module.exports = {
-  notFoundHandler,
-  errorHandler
-};
+module.exports = { notFoundHandler, errorHandler };

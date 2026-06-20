@@ -1,0 +1,714 @@
+/*
+ * Tema UNAND Modern
+ * Meng-override CSS variable bawaan Basecoat (didefinisikan di basecoat.min.css)
+ * agar seluruh komponen (button, card, badge, table, dst) otomatis memakai
+ * palet warna institusi tanpa perlu mengubah file Tailwind yang di-generate.
+ *
+ * WAJIB di-load SETELAH basecoat.min.css di setiap halaman.
+ */
+
+:root {
+  /* --- Palet warna UNAND --- */
+  --unand-primary:    #1B5E20; /* hijau tua — warna utama institusi */
+  --unand-secondary:  #2E7D32; /* hijau menengah */
+  --unand-accent:     #4CAF50; /* hijau terang — aksen interaktif */
+  --unand-bg:         #F8FAFC; /* latar halaman */
+  --unand-text:       #1F2937; /* teks utama */
+
+  /* --- Override token Basecoat: warna dasar --- */
+  --background: var(--unand-bg);
+  --foreground: var(--unand-text);
+  --card: #FFFFFF;
+  --card-foreground: var(--unand-text);
+  --popover: #FFFFFF;
+  --popover-foreground: var(--unand-text);
+
+  /* --- Primary / Secondary / Accent --- */
+  --primary: var(--unand-primary);
+  --primary-foreground: #FFFFFF;
+  --secondary: #E8F5E9; /* hijau sangat muda, untuk badge/section lembut */
+  --secondary-foreground: var(--unand-secondary);
+  --accent: #EDF7EE;
+  --accent-foreground: var(--unand-primary);
+
+  /* --- Muted (latar netral, teks sekunder) --- */
+  --muted: #EEF2F1;
+  --muted-foreground: #5B6B68;
+
+  /* --- Border / Input / Ring --- */
+  --border: #DCE3E1;
+  --input: #D7DFDC;
+  --ring: var(--unand-accent);
+
+  /* --- Destructive (tetap merah standar, untuk aksi tolak/hapus) --- */
+  --destructive: #B3261E;
+
+  /* --- Sidebar --- */
+  --sidebar: #FFFFFF;
+  --sidebar-foreground: var(--unand-text);
+  --sidebar-primary: var(--unand-primary);
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #E8F5E9;
+  --sidebar-accent-foreground: var(--unand-primary);
+  --sidebar-border: #DCE3E1;
+  --sidebar-ring: var(--unand-accent);
+
+  /* --- Radius: sedikit lebih formal/tegas dibanding default Basecoat --- */
+  --radius: 0.45rem;
+}
+
+/* Mode gelap: tetap berbasis hijau UNAND, dengan kontras yang sesuai */
+.dark {
+  --background: #0F1713;
+  --foreground: #E5EDE9;
+  --card: #16201B;
+  --card-foreground: #E5EDE9;
+  --popover: #16201B;
+  --popover-foreground: #E5EDE9;
+
+  --primary: #4CAF50;
+  --primary-foreground: #0B1410;
+  --secondary: #1C2B22;
+  --secondary-foreground: #8FD89A;
+  --accent: #1C2B22;
+  --accent-foreground: #8FD89A;
+
+  --muted: #1A241F;
+  --muted-foreground: #94A39D;
+
+  --border: #2A3832;
+  --input: #2A3832;
+  --ring: #4CAF50;
+
+  --sidebar: #121B16;
+  --sidebar-foreground: #E5EDE9;
+  --sidebar-primary: #4CAF50;
+  --sidebar-primary-foreground: #0B1410;
+  --sidebar-accent: #1C2B22;
+  --sidebar-accent-foreground: #8FD89A;
+  --sidebar-border: #2A3832;
+  --sidebar-ring: #4CAF50;
+}
+
+/* --- Elemen identitas institusi --- */
+
+/* Header/logo institusi yang dipakai di login & sidebar */
+.unand-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.unand-brand-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.5rem;
+  background: linear-gradient(135deg, var(--unand-primary), var(--unand-secondary));
+  color: #FFFFFF;
+  flex-shrink: 0;
+  box-shadow: 0 1px 2px rgba(27, 94, 32, 0.25);
+}
+
+.unand-brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+
+.unand-brand-title {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--unand-text);
+  letter-spacing: 0.01em;
+}
+
+.unand-brand-subtitle {
+  font-size: 0.6875rem;
+  color: var(--muted-foreground);
+}
+
+/* Pita aksen tipis ala dokumen resmi institusi, dipakai di atas card login */
+.unand-accent-bar {
+  height: 0.25rem;
+  width: 100%;
+  background: linear-gradient(
+    90deg,
+    var(--unand-primary) 0%,
+    var(--unand-secondary) 50%,
+    var(--unand-accent) 100%
+  );
+}
+
+/* Badge status pengajuan — dipetakan ke warna semantik yang konsisten */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.1875rem 0.625rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.status-badge::before {
+  content: "";
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 999px;
+  background: currentColor;
+}
+
+.status-badge--menunggu {
+  background: #FEF3E2;
+  color: #B45309;
+}
+
+.status-badge--revisi {
+  background: #FEE2E2;
+  color: #B91C1C;
+}
+
+.status-badge--terverifikasi,
+.status-badge--diproses {
+  background: #E0F2FE;
+  color: #0369A1;
+}
+
+.status-badge--disetujui {
+  background: #E8F5E9;
+  color: var(--unand-primary);
+}
+
+.status-badge--ditolak {
+  background: #FEE2E2;
+  color: #991B1B;
+}
+
+/* Kartu statistik ringkas di dashboard */
+.stat-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg, 0.625rem);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.stat-card-label {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+  font-weight: 500;
+}
+
+.stat-card-value {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: var(--unand-text);
+  line-height: 1.1;
+}
+
+.stat-card-icon {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent);
+  color: var(--unand-primary);
+}
+
+/* =========================================================
+ * Layout primitives
+ * Basecoat (basecoat.min.css) hanya berisi komponen siap pakai
+ * (.btn, .card, .table, .badge, dst) — TIDAK menyediakan utility
+ * generik seperti flex/grid/gap karena file itu hasil compile
+ * Tailwind JIT dari source Basecoat sendiri, bukan dari proyek ini.
+ * Class di bawah ini menggantikan kebutuhan layout dasar tersebut.
+ * ========================================================= */
+
+.page-shell {
+  min-height: 100vh;
+  background: var(--background);
+  color: var(--foreground);
+}
+
+/* --- Halaman login: shell penuh + card terpusat --- */
+.login-shell {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: #F8FAFC;
+}
+
+.login-card-wrap {
+  width: 100%;
+  max-width: 64rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.login-card {
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius-xl, 0.75rem);
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--card-foreground);
+  overflow: hidden;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+}
+
+.login-card-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+.login-card-panel--hide-mobile {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .login-card-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .login-card-panel--hide-mobile {
+    display: flex;
+  }
+}
+
+.login-form-panel {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+@media (min-width: 768px) {
+  .login-form-panel { padding: 2.5rem; }
+}
+
+.login-side-panel {
+  flex-direction: column;
+  justify-content: space-between;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  padding: 2.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-side-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.08;
+  background-image: radial-gradient(circle at 30% 20%, white 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+.login-side-content {
+  position: relative;
+  z-index: 1;
+}
+
+.login-feature-list {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 2rem;
+  list-style: none;
+  padding: 0;
+}
+
+.login-feature-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.login-feature-bullet {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.15);
+  flex-shrink: 0;
+}
+
+.login-footer-note {
+  font-size: 0.75rem;
+  text-align: center;
+  color: var(--muted-foreground);
+  padding: 0 1.5rem;
+}
+
+/* --- Form fields (dipakai bersama .form / .field bawaan Basecoat) --- */
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.form-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.form-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.625rem;
+  font-size: 0.875rem;
+  padding: 0.75rem;
+  border-radius: var(--radius-md, 0.375rem);
+  background: color-mix(in srgb, var(--destructive) 12%, transparent);
+  color: var(--destructive);
+  border: 1px solid color-mix(in srgb, var(--destructive) 25%, transparent);
+}
+
+/* --- Dashboard: sidebar tetap + area konten --- */
+.app-sidebar {
+  display: none;
+  position: fixed;
+  inset-block: 0;
+  left: 0;
+  width: 16rem;
+  z-index: 50;
+  flex-direction: column;
+  border-right: 1px solid var(--sidebar-border);
+  background: var(--sidebar);
+  color: var(--sidebar-foreground);
+}
+
+.app-sidebar--mobile-open {
+  display: flex;
+}
+
+@media (min-width: 1024px) {
+  .app-sidebar { display: flex; }
+  .app-main { padding-left: 16rem; }
+}
+
+.mobile-menu-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.mobile-menu-overlay--open {
+  display: block;
+}
+
+.mobile-menu-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--radius-md, 0.375rem);
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--foreground);
+  flex-shrink: 0;
+}
+
+@media (min-width: 1024px) {
+  .mobile-menu-btn { display: none; }
+}
+
+.app-sidebar-inner {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 1.25rem;
+  overflow-y: auto;
+  padding: 0 1.5rem 1rem;
+}
+
+.app-sidebar-header {
+  display: flex;
+  height: 4rem;
+  flex-shrink: 0;
+  align-items: center;
+  border-bottom: 1px solid var(--sidebar-border);
+}
+
+.app-sidebar-nav {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.app-sidebar-list {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.25rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.app-sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-radius: var(--radius-md, 0.375rem);
+  padding: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--muted-foreground);
+  text-decoration: none;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.app-sidebar-link:hover {
+  background: var(--muted);
+  color: var(--foreground);
+}
+
+.app-sidebar-link--active {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.app-sidebar-footer {
+  margin-top: auto;
+  border-top: 1px solid var(--sidebar-border);
+  padding-top: 1rem;
+}
+
+.app-sidebar-user {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.app-sidebar-avatar {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--primary) 12%, transparent);
+  color: var(--primary);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.app-sidebar-user-text {
+  min-width: 0;
+  flex: 1;
+}
+
+.app-sidebar-user-name {
+  font-size: 0.875rem;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.app-sidebar-user-role {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+  text-transform: capitalize;
+}
+
+.app-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  height: 4rem;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 1rem;
+  border-bottom: 1px solid var(--border);
+  background: color-mix(in srgb, var(--background) 95%, transparent);
+  backdrop-filter: blur(6px);
+  padding-inline: 1rem;
+}
+
+@media (min-width: 1024px) {
+  .app-topbar { padding-inline: 2rem; }
+}
+
+.app-topbar-title {
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.25;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.app-topbar-subtitle {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.app-content {
+  padding: 1rem;
+}
+
+@media (min-width: 1024px) {
+  .app-content { padding: 2rem; }
+}
+
+.content-narrow {
+  max-width: 64rem;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* --- Grid kartu statistik --- */
+.stat-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .stat-grid--2 { grid-template-columns: repeat(2, 1fr); }
+  .stat-grid--3 { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (min-width: 1024px) {
+  .stat-grid--4 { grid-template-columns: repeat(4, 1fr); }
+}
+
+.stat-card-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+/* --- Empty state (placeholder ketika belum ada data) --- */
+.empty-state {
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-lg, 0.625rem);
+  background: color-mix(in srgb, var(--muted) 60%, transparent);
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+}
+
+.empty-state-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--primary) 12%, transparent);
+  color: var(--primary);
+  margin: 0 auto 0.75rem;
+}
+
+.empty-state-title {
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+.empty-state-desc {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  max-width: 24rem;
+  margin: 0.25rem auto 0;
+}
+
+.table-wrap {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg, 0.625rem);
+  overflow: hidden;
+}
+
+.text-center { text-align: center; }
+.mt-4 { margin-top: 1rem; }
+.text-muted-foreground { color: var(--muted-foreground); }
+.text-destructive { color: var(--destructive); }
+.text-sm { font-size: 0.875rem; }
+.text-xs { font-size: 0.75rem; }
+.font-medium { font-weight: 500; }
+.font-semibold { font-weight: 600; }
+
+/* --- Halaman error --- */
+.error-shell {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: var(--background);
+}
+
+.error-card {
+  width: 100%;
+  max-width: 28rem;
+  text-align: center;
+}
+
+.error-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--destructive) 12%, transparent);
+  color: var(--destructive);
+  margin: 0 auto 1.25rem;
+}
+
+.error-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.error-message {
+  color: var(--muted-foreground);
+  margin-top: 0.5rem;
+}
+
+.error-stack {
+  margin-top: 1.5rem;
+  text-align: left;
+  font-size: 0.75rem;
+  background: var(--muted);
+  color: var(--muted-foreground);
+  border-radius: var(--radius-md, 0.375rem);
+  padding: 1rem;
+  overflow-x: auto;
+}
