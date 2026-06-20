@@ -72,7 +72,6 @@ app.use('/mahasiswa', require('./routes/mahasiswa'));
 app.use('/admin',     require('./routes/admin'));
 app.use('/kaprodi',   require('./routes/kaprodi'));
 app.use('/dekan',     require('./routes/dekan'));
-app.use('/api',       require('./routes/api'));
 
 
 // ─── Error handler ────────────────────────────────────────
