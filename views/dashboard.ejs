@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Informasi Akademik - B16</title>
+    <title>Sistem Informasi Akademik - B16 x Martia</title>
     <link rel="stylesheet" href="https://unpkg.com/@basecoat/basecoat/dist/basecoat.min.css">
     <style>
         :root { --unand-green: #006837; --unand-yellow: #f9ed32; }
@@ -26,8 +26,8 @@
     <nav class="navbar">
         <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
             <div>
-                <h1 style="margin: 0; font-size: 1.5rem;">Sistem Pengajuan SK</h1>
-                <p style="margin: 0; opacity: 0.9;">Kelompok B16 - Portal Terpadu</p>
+                <h1 style="margin: 0; font-size: 1.5rem;">Portal Terpadu Fakultas</h1>
+                <p style="margin: 0; opacity: 0.9;">Kolaborasi Sistem B16 & Tim Martia</p>
             </div>
             <% if (role) { %>
                 <div style="text-align: right;">
@@ -39,26 +39,30 @@
 
     <div class="container">
         
-        <!-- ========================================== -->
-        <!-- VIEW 1: THE LOGIN SCREEN (IF NO ROLE SELECTED) -->
-        <!-- ========================================== -->
         <% if (!role) { %>
             
-            <!-- Step 1: The Role Selector -->
+            <div class="login-box" style="margin-bottom: 2rem; border-top-color: #dc3545;">
+                <h2 style="color: #dc3545; margin-top: 0;">🛑 Modul Pengunduran Diri</h2>
+                <p style="color: #666; margin-bottom: 1.5rem;">Sistem Pengunduran Diri Mahasiswa terintegrasi (Dikembangkan oleh Tim Martia).</p>
+                
+                <a href="/mahasiswa" class="role-btn" style="background: #dc3545; border: none;">🎓 Akses Portal Mahasiswa</a>
+                <a href="/kaprodi" class="role-btn" style="background: #e0a800; border: none; color: #111 !important;">👨‍🏫 Akses Portal Kaprodi</a>
+                <a href="/dekan" class="role-btn" style="background: #a71d2a; border: none;">🏛️ Akses Portal Dekan</a>
+            </div>
+
             <div class="login-box" id="roleSelection">
                 <div id="globalLockAlert" class="locked-alert">
                     🚨 SISTEM TERKUNCI: Terlalu banyak percobaan gagal. Silakan hubungi IT Fakultas.
                 </div>
 
-                <h2 style="color: var(--unand-green); margin-top: 0;">Portal Keamanan Pegawai</h2>
+                <h2 style="color: var(--unand-green); margin-top: 0;">📄 Modul Pengajuan SK (B16)</h2>
                 <p style="color: #666; margin-bottom: 2rem;">Sistem ini dilindungi. Silakan pilih identitas Anda untuk melanjutkan otentikasi.</p>
                 
-                <button onclick="showLogin('kaprodi')" class="role-btn" style="background: #0056b3; border: none; cursor: pointer;">👨‍💼 Akses Kaprodi</button>
-                <button onclick="showLogin('wd1')" class="role-btn" style="background: #d39e00; border: none; cursor: pointer;">🏛️ Akses Wakil Dekan 1</button>
-                <button onclick="showLogin('admin')" class="role-btn" style="background: #333; border: none; cursor: pointer;">🔍 Akses Radar Admin</button>
+                <button onclick="showLogin('kaprodi')" class="role-btn" style="background: #0056b3; border: none; cursor: pointer;">👨‍💼 Akses Kaprodi B16</button>
+                <button onclick="showLogin('wd1')" class="role-btn" style="background: #d39e00; border: none; cursor: pointer;">🏛️ Akses Wakil Dekan 1 B16</button>
+                <button onclick="showLogin('admin')" class="role-btn" style="background: #333; border: none; cursor: pointer;">🔍 Akses Radar Admin B16</button>
             </div>
 
-            <!-- Step 2: The Secret Password Form -->
             <div class="login-box" id="passwordForm" style="display: none; border-top-color: #333;">
                 <h2 id="loginTitle" style="color: #333; margin-top: 0;">Otentikasi Dibutuhkan</h2>
                 <p id="loginSubtitle" style="color: #666; margin-bottom: 1.5rem; font-size: 0.9rem;">Masukkan email institusi dan PIN rahasia Anda.</p>
@@ -71,9 +75,6 @@
             </div>
         <% } %>
 
-        <!-- ========================================== -->
-        <!-- VIEW 2: THE SECURE DASHBOARD (IF LOGGED IN) -->
-        <!-- ========================================== -->
         <% if (role) { %>
             <div style="background: white; padding: 2rem; border-left: 6px solid var(--unand-green); border-radius: 4px; margin-bottom: 2rem;">
                 <h2 style="margin-top: 0; color: var(--unand-green);">Selamat Datang, <%= role.toUpperCase() %></h2>
@@ -82,7 +83,6 @@
 
             <div class="grid-menu">
                 
-                <!-- SHOW ONLY IF KAPRODI -->
                 <% if (role === 'kaprodi') { %>
                 <div class="menu-card" style="border-top: 4px solid #0056b3;">
                     <h3 style="color: #0056b3; margin-top:0;">Panel Kaprodi</h3>
@@ -92,7 +92,6 @@
                 </div>
                 <% } %>
 
-                <!-- SHOW ONLY IF WD1 -->
                 <% if (role === 'wd1') { %>
                 <div class="menu-card" style="border-top: 4px solid var(--unand-yellow);">
                     <h3 style="color: #856404; margin-top:0;">Panel Wakil Dekan 1</h3>
@@ -102,7 +101,6 @@
                 </div>
                 <% } %>
 
-                <!-- SHOW ONLY IF ADMIN/RADAR -->
                 <% if (role === 'admin') { %>
                 <div class="menu-card" style="border-top: 4px solid #333;">
                     <h3 style="color: #333; margin-top:0;">Radar Pelacakan</h3>
@@ -117,9 +115,6 @@
 
     </div>
 
-    <!-- ========================================== -->
-    <!-- AUTHENTICATION & SECURITY JAVASCRIPT LOGIC -->
-    <!-- ========================================== -->
     <script>
         let currentSelectedRole = '';
         let failedAttempts = 0; // The strike counter

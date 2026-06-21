@@ -62,17 +62,19 @@ app.use((req, res, next) => {
 const dashboardController = require('./controllers/dashboardController');
 const b16Router = require('./routes/b16Routes');
 
-// 2. Then, tell the app to use them
+// 2. Tell the app to use B16 and the Unified Dashboard
 app.use('/b16', b16Router);
 app.get('/', dashboardController.index);
 
-app.use('/api', require('./routes/api'));
-// Routes per role (akan ditambahkan pada fase berikutnya)
+// 3. RECONNECT MARTIA'S MAIN VIEWS (Login, Index, dll)
+app.use('/', indexRouter); 
+
+// 4. Martia's Role Routes
 app.use('/mahasiswa', require('./routes/mahasiswa'));
 app.use('/admin',     require('./routes/admin'));
 app.use('/kaprodi',   require('./routes/kaprodi'));
 app.use('/dekan',     require('./routes/dekan'));
-
+app.use('/api',       require('./routes/api'));
 
 // ─── Error handler ────────────────────────────────────────
 app.use(notFoundHandler);
