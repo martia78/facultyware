@@ -9,6 +9,7 @@ const MySQLStore = require('express-mysql-session')(session);
 
 const indexRouter = require('./routes/index');
 const { notFoundHandler, errorHandler } = require('./middlewares/error');
+const usersRouter = require('./routes/users');
 
 const app = express();
 
@@ -46,29 +47,42 @@ app.use(session({
   },
 }));
 
+// 1. First, require the routers (Initialize them)
+const dashboardController = require('./controllers/dashboardController');
+const b16Router = require('./routes/b16Routes');
+
 // ─── Variabel global untuk semua view ─────────────────────
 app.use((req, res, next) => {
-  res.locals.user     = req.session.userId ? {
-    id:       req.session.userId,
+  res.locals.user = req.session.userId ? {
+    id: req.session.userId,
     username: req.session.username,
-    name:     req.session.name,
-    role:     req.session.role,
+    name: req.session.name,
+    role: req.session.role,
   } : null;
-  res.locals.appName  = 'Sistem Pengunduran Diri';
+  res.locals.appName = 'Sistem Pengunduran Diri';
   next();
 });
 
 // ─── Routes ───────────────────────────────────────────────
-app.use('/', indexRouter);
-app.use('/api',       require('./routes/api'));
 
-// Routes per role
+// Route milik teman
+app.use('/b16', b16Router);
+app.get('/', dashboardController.index);
+
+// Route milik Saya
+app.use('/', indexRouter);
+app.use('/api', require('./routes/api'));
+
 app.use('/mahasiswa', require('./routes/mahasiswa'));
-app.use('/admin',     require('./routes/admin'));
-app.use('/kaprodi',   require('./routes/kaprodi'));
-app.use('/dekan',     require('./routes/dekan'));
+app.use('/admin', require('./routes/admin'));
+app.use('/kaprodi', require('./routes/kaprodi'));
+app.use('/dekan', require('./routes/dekan'));
 
 // ─── Error handler ────────────────────────────────────────
+app.use(notFoundHandler);
+app.use(errorHandler);
+
+module.exports = app;
 app.use(notFoundHandler);
 app.use(errorHandler);
 
