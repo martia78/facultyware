@@ -9,6 +9,9 @@ const { submissionRules, handleValidation }     = require('../middlewares/valida
 
 const isMahasiswa = [isAuthenticated, authorize(['mahasiswa'])];
 
+// Redirect /mahasiswa (tanpa sub-halaman) ke dashboard, bukan 404
+router.get('/', (req, res) => res.redirect('/mahasiswa/dashboard'));
+
 router.get('/dashboard', ...isMahasiswa, mahasiswaController.dashboard);
 router.get('/profile',   ...isMahasiswa, mahasiswaController.profile);
 

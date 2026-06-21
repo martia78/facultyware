@@ -1,8 +1,8 @@
 // GET /dekan/dashboard
 const dashboard = (req, res) => {
-  res.render('dekan/dashboard', {
-    title: 'Dashboard Dekan',
-    pageTitle: 'Dashboard Dekan',
+  res.render('wd1/dashboard', {
+    title: 'Dashboard Wakil Dekan 1',
+    pageTitle: 'Dashboard Wakil Dekan 1',
     pageSubtitle: 'Keputusan akhir atas pengajuan yang disetujui prodi',
   });
 };

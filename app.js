@@ -47,11 +47,6 @@ app.use(session({
   },
 }));
 
-<<<<<<< HEAD
-// 1. First, require the routers (Initialize them)
-const dashboardController = require('./controllers/dashboardController');
-const b16Router = require('./routes/b16Routes');
-
 // ─── Variabel global untuk semua view ─────────────────────
 app.use((req, res, next) => {
   res.locals.user = req.session.userId ? {
@@ -60,43 +55,13 @@ app.use((req, res, next) => {
     name: req.session.name,
     role: req.session.role,
   } : null;
+
   res.locals.appName = 'Sistem Pengunduran Diri';
-=======
-// ─── Variabel global untuk semua view ─────────────────────
-app.use((req, res, next) => {
-  res.locals.user     = req.session.userId ? {
-    id:       req.session.userId,
-    username: req.session.username,
-    name:     req.session.name,
-    role:     req.session.role,
-  } : null;
-  res.locals.appName  = 'Sistem Pengunduran Diri';
->>>>>>> main
+
   next();
 });
 
 // ─── Routes ───────────────────────────────────────────────
-<<<<<<< HEAD
-
-// Route milik teman
-app.use('/b16', b16Router);
-app.get('/', dashboardController.index);
-
-// Route milik Saya
-app.use('/', indexRouter);
-app.use('/api', require('./routes/api'));
-
-app.use('/mahasiswa', require('./routes/mahasiswa'));
-app.use('/admin', require('./routes/admin'));
-app.use('/kaprodi', require('./routes/kaprodi'));
-app.use('/dekan', require('./routes/dekan'));
-
-// ─── Error handler ────────────────────────────────────────
-app.use(notFoundHandler);
-app.use(errorHandler);
-
-module.exports = app;
-=======
 // 1. First, require the routers (Initialize them)
 const dashboardController = require('./controllers/dashboardController');
 const b16Router = require('./routes/b16Routes');
@@ -112,11 +77,10 @@ app.use('/', indexRouter);
 app.use('/mahasiswa', require('./routes/mahasiswa'));
 app.use('/admin',     require('./routes/admin'));
 app.use('/kaprodi',   require('./routes/kaprodi'));
-app.use('/dekan',     require('./routes/dekan'));
+app.use('/dekan',     require('./routes/wd1'));
 app.use('/api',       require('./routes/api'));
 
 // ─── Error handler ────────────────────────────────────────
->>>>>>> main
 app.use(notFoundHandler);
 app.use(errorHandler);
 

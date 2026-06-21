@@ -12,12 +12,20 @@
       <main class="app-content">
         <div class="content-narrow">
 
+          <%# Flash %>
+          <% if (flash) { %>
+          <div class="alert alert--<%= flash.type === 'success' ? 'success' : 'danger' %> mb-5">
+            <%= flash.message %>
+          </div>
+          <% } %>
+
+          <%# ── Statistik ──────────────────────────────────────────────── %>
           <section class="stat-grid stat-grid--3">
             <div class="stat-card">
               <div class="stat-card-row">
                 <div>
-                  <div class="stat-card-label">Menunggu Keputusan</div>
-                  <div class="stat-card-value">0</div>
+                  <div class="stat-card-label">Total Menunggu Verifikasi</div>
+                  <div class="stat-card-value"><%= stats.menunggu %></div>
                 </div>
                 <div class="stat-card-icon">
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -28,8 +36,8 @@
             <div class="stat-card">
               <div class="stat-card-row">
                 <div>
-                  <div class="stat-card-label">Disetujui Bulan Ini</div>
-                  <div class="stat-card-value">0</div>
+                  <div class="stat-card-label">Total Disetujui</div>
+                  <div class="stat-card-value"><%= stats.disetujui %></div>
                 </div>
                 <div class="stat-card-icon">
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
@@ -40,8 +48,8 @@
             <div class="stat-card">
               <div class="stat-card-row">
                 <div>
-                  <div class="stat-card-label">Ditolak Bulan Ini</div>
-                  <div class="stat-card-value">0</div>
+                  <div class="stat-card-label">Total Ditolak</div>
+                  <div class="stat-card-value"><%= stats.ditolak %></div>
                 </div>
                 <div class="stat-card-icon">
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
@@ -50,36 +58,68 @@
             </div>
           </section>
 
-          <div class="card">
-            <header style="display:flex; align-items:center; justify-content:space-between;">
-              <div>
-                <h2>Pengajuan Terverifikasi</h2>
-                <p>Telah diperiksa Admin Akademik dan menunggu keputusan Anda sebagai Ketua Program Studi.</p>
+          <%# ── Daftar Pengajuan Menunggu Verifikasi ──────────────────────── %>
+          <div class="dash-card">
+            <div class="dash-card-header">
+              <div class="dash-card-title-group">
+                <div class="dash-card-title-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                </div>
+                <div>
+                  <h2 class="dash-card-title">Daftar Pengajuan Menunggu Verifikasi</h2>
+                  <p class="dash-card-subtitle">Pengajuan yang membutuhkan keputusan Anda saat ini.</p>
+                </div>
               </div>
-              <a href="/kaprodi/submissions" class="btn-sm-outline">Lihat Semua</a>
-            </header>
-            <section>
+              <a href="/kaprodi/submissions" class="btn-outline-icon btn-outline-icon--sm">Lihat Semua</a>
+            </div>
+
+            <div class="dash-card-body">
+              <% if (queue.length === 0) { %>
+              <div class="empty-state">
+                <div class="empty-state-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                </div>
+                <h3 class="empty-state-title">Tidak ada pengajuan yang menunggu</h3>
+                <p class="empty-state-desc">Semua pengajuan sudah Anda proses. Pengajuan baru akan muncul di sini.</p>
+              </div>
+              <% } else { %>
               <div class="table-wrap">
                 <table class="table">
                   <thead>
                     <tr>
-                      <th>NIM</th>
+                      <th>No. Pengajuan</th>
                       <th>Nama Mahasiswa</th>
-                      <th>Tanggal Verifikasi</th>
-                      <th>Status</th>
-                      <th></th>
+                      <th>NIM</th>
+                      <th>Program Studi</th>
+                      <th>Tanggal Pengajuan</th>
+                      <th style="width:1%;white-space:nowrap;"></th>
                     </tr>
                   </thead>
                   <tbody>
+                    <% queue.forEach(sub => { %>
                     <tr>
-                      <td colspan="5" class="text-center text-muted-foreground" style="padding: 2rem 0;">
-                        Belum ada pengajuan yang menunggu keputusan Anda.
+                      <td><code style="font-size:0.8125rem;"><%= sub.request_number %></code></td>
+                      <td><%= sub.student_name || '—' %></td>
+                      <td><%= sub.student_nim || '—' %></td>
+                      <td><%= sub.department_name || '—' %></td>
+                      <td>
+                        <%= sub.requested_at
+                              ? new Date(sub.requested_at).toLocaleDateString('id-ID', { day:'2-digit', month:'long', year:'numeric' })
+                              : '—' %>
+                      </td>
+                      <td>
+                        <a href="/kaprodi/submissions/<%= sub.id %>" class="dash-table-detail-btn">
+                          Detail
+                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                        </a>
                       </td>
                     </tr>
+                    <% }) %>
                   </tbody>
                 </table>
               </div>
-            </section>
+              <% } %>
+            </div>
           </div>
 
         </div>
