@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Informasi Akademik - B16 x Martia</title>
+    <title>Portal Terpadu Fakultas</title>
     <link rel="stylesheet" href="https://unpkg.com/@basecoat/basecoat/dist/basecoat.min.css">
     <style>
         :root { --unand-green: #006837; --unand-yellow: #f9ed32; }
@@ -15,10 +15,11 @@
         .menu-card:hover { transform: translateY(-5px); }
         .btn-unand { display: block; padding: 0.8rem; text-decoration: none; border-radius: 4px; font-weight: bold; margin-top: 1rem; color: white !important; }
         .stat-badge { background: #e6f4ea; color: var(--unand-green); padding: 0.3rem 0.8rem; border-radius: 20px; font-weight: bold; font-size: 1.2rem; }
-        .login-box { text-align: center; background: white; padding: 3rem; border-radius: 8px; border-top: 6px solid var(--unand-green); box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 500px; margin: 0 auto; }
+        
+        /* Cleaned up Login Box */
+        .login-box { text-align: center; background: white; padding: 3rem; border-radius: 8px; border-top: 6px solid var(--unand-green); box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 600px; margin: 0 auto; }
         .role-btn { display: inline-block; width: 100%; margin-bottom: 10px; padding: 12px; border-radius: 6px; font-weight: bold; text-decoration: none; color: white !important; transition: opacity 0.2s; }
         .role-btn:hover { opacity: 0.9; }
-        .locked-alert { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; padding: 1rem; border-radius: 4px; margin-bottom: 1rem; display: none; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -27,11 +28,11 @@
         <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
             <div>
                 <h1 style="margin: 0; font-size: 1.5rem;">Portal Terpadu Fakultas</h1>
-                <p style="margin: 0; opacity: 0.9;">Kolaborasi Sistem B16 & Tim Martia</p>
+                <p style="margin: 0; opacity: 0.9;">Sistem Pengajuan Pengunduran Diri Mahasiswa</p>
             </div>
             <% if (role) { %>
                 <div style="text-align: right;">
-                    <a href="/" style="color: white; text-decoration: underline; font-size: 0.9rem;">Keluar (Logout)</a>
+                    <a href="/logout" style="color: white; text-decoration: underline; font-size: 0.9rem;">Keluar (Logout)</a>
                 </div>
             <% } %>
         </div>
@@ -40,38 +41,16 @@
     <div class="container">
         
         <% if (!role) { %>
-            
-            <div class="login-box" style="margin-bottom: 2rem; border-top-color: #dc3545;">
-                <h2 style="color: #dc3545; margin-top: 0;">🛑 Modul Pengunduran Diri</h2>
-                <p style="color: #666; margin-bottom: 1.5rem;">Sistem Pengunduran Diri Mahasiswa terintegrasi (Dikembangkan oleh Tim Martia).</p>
+            <div class="login-box">
+                <h2 style="color: var(--unand-green); margin-top: 0;">Pilih Portal Layanan</h2>
+                <p style="color: #666; margin-bottom: 2rem;">Silakan pilih portal sesuai dengan peran Anda untuk masuk ke dalam sistem.</p>
                 
-                <a href="/mahasiswa" class="role-btn" style="background: #dc3545; border: none;">🎓 Akses Portal Mahasiswa</a>
-                <a href="/kaprodi" class="role-btn" style="background: #e0a800; border: none; color: #111 !important;">👨‍🏫 Akses Portal Kaprodi</a>
-                <a href="/dekan" class="role-btn" style="background: #a71d2a; border: none;">🏛️ Akses Portal Dekan</a>
-            </div>
-
-            <div class="login-box" id="roleSelection">
-                <div id="globalLockAlert" class="locked-alert">
-                    🚨 SISTEM TERKUNCI: Terlalu banyak percobaan gagal. Silakan hubungi IT Fakultas.
-                </div>
-
-                <h2 style="color: var(--unand-green); margin-top: 0;">📄 Modul Pengajuan SK (B16)</h2>
-                <p style="color: #666; margin-bottom: 2rem;">Sistem ini dilindungi. Silakan pilih identitas Anda untuk melanjutkan otentikasi.</p>
+                <a href="/login" class="role-btn" style="background: #0056b3;">🎓 Portal Mahasiswa</a>
+                <a href="/login" class="role-btn" style="background: #28a745;">👨‍🏫 Portal Ketua Program Studi</a>
+                <a href="/login" class="role-btn" style="background: #d39e00;">🏛️ Portal Wakil Dekan 1</a>
+                <a href="/login" class="role-btn" style="background: #333;">🔍 Portal Admin Akademik</a>
                 
-                <button onclick="showLogin('kaprodi')" class="role-btn" style="background: #0056b3; border: none; cursor: pointer;">👨‍💼 Akses Kaprodi B16</button>
-                <button onclick="showLogin('wd1')" class="role-btn" style="background: #d39e00; border: none; cursor: pointer;">🏛️ Akses Wakil Dekan 1 B16</button>
-                <button onclick="showLogin('admin')" class="role-btn" style="background: #333; border: none; cursor: pointer;">🔍 Akses Radar Admin B16</button>
-            </div>
-
-            <div class="login-box" id="passwordForm" style="display: none; border-top-color: #333;">
-                <h2 id="loginTitle" style="color: #333; margin-top: 0;">Otentikasi Dibutuhkan</h2>
-                <p id="loginSubtitle" style="color: #666; margin-bottom: 1.5rem; font-size: 0.9rem;">Masukkan email institusi dan PIN rahasia Anda.</p>
-                
-                <input type="email" id="emailInput" placeholder="email@unand.ac.id" class="form-control" style="width: 100%; margin-bottom: 1rem; box-sizing: border-box;" required>
-                <input type="password" id="passwordInput" placeholder="Masukkan PIN Rahasia..." class="form-control" style="width: 100%; margin-bottom: 1.5rem; box-sizing: border-box;" required>
-                
-                <button id="loginBtn" onclick="verifyLogin()" class="btn-unand" style="width: 100%; border: none; cursor: pointer; background: var(--unand-green);">Buka Sistem</button>
-                <button id="cancelBtn" onclick="cancelLogin()" class="btn-unand" style="width: 100%; border: none; cursor: pointer; background: #eee; color: #333 !important; margin-top: 0.5rem;">Batal</button>
+                <p style="font-size: 0.85rem; color: #999; margin-top: 1.5rem;">Sistem dilengkapi otentikasi terpusat. Anda akan diarahkan ke halaman login yang aman.</p>
             </div>
         <% } %>
 
@@ -84,29 +63,29 @@
             <div class="grid-menu">
                 
                 <% if (role === 'kaprodi') { %>
-                <div class="menu-card" style="border-top: 4px solid #0056b3;">
-                    <h3 style="color: #0056b3; margin-top:0;">Panel Kaprodi</h3>
-                    <p>Fitur untuk meninjau dan memberikan catatan rekomendasi tingkat prodi.</p>
-                    <div style="margin: 1rem 0;">Antrean Saat Ini: <span class="stat-badge"><%= stats.kaprodi %></span></div>
-                    <a href="/b16/kaprodi" class="btn-unand" style="background: #0056b3;">Buka Inbox Kaprodi</a>
+                <div class="menu-card" style="border-top: 4px solid #28a745;">
+                    <h3 style="color: #28a745; margin-top:0;">Panel Kaprodi</h3>
+                    <p>Fitur untuk meninjau dan memberikan persetujuan tingkat prodi.</p>
+                    <div style="margin: 1rem 0;">Menunggu Verifikasi: <span class="stat-badge"><%= stats.kaprodi || 0 %></span></div>
+                    <a href="/kaprodi" class="btn-unand" style="background: #28a745;">Buka Inbox Kaprodi</a>
                 </div>
                 <% } %>
 
                 <% if (role === 'wd1') { %>
                 <div class="menu-card" style="border-top: 4px solid var(--unand-yellow);">
                     <h3 style="color: #856404; margin-top:0;">Panel Wakil Dekan 1</h3>
-                    <p>Fitur pengesahan akhir dan penerbitan nomor Surat Keputusan (SK).</p>
-                    <div style="margin: 1rem 0;">Menunggu Pengesahan: <span class="stat-badge" style="background:#fff3cd; color:#856404;"><%= stats.wd1 %></span></div>
-                    <a href="/b16/wd1" class="btn-unand" style="background: #d39e00;">Buka Inbox WD1</a>
+                    <p>Fitur pengesahan akhir Surat Keputusan (SK) Pengunduran Diri.</p>
+                    <div style="margin: 1rem 0;">Menunggu Pengesahan: <span class="stat-badge" style="background:#fff3cd; color:#856404;"><%= stats.wd1 || 0 %></span></div>
+                    <a href="/dekan" class="btn-unand" style="background: #d39e00;">Buka Inbox dekan</a>
                 </div>
                 <% } %>
 
                 <% if (role === 'admin') { %>
                 <div class="menu-card" style="border-top: 4px solid #333;">
                     <h3 style="color: #333; margin-top:0;">Radar Pelacakan</h3>
-                    <p>Mesin pencari global terintegrasi untuk melacak status dokumen pemohon.</p>
-                    <div style="margin: 1rem 0;">Total Berkas: <span class="stat-badge" style="background: #eee; color: #333;"><%= stats.total %></span></div>
-                    <a href="/b16/radar" class="btn-unand" style="background: #333;">Buka Radar Global</a>
+                    <p>Mesin pencari global terintegrasi untuk melacak status dokumen.</p>
+                    <div style="margin: 1rem 0;">Total Berkas: <span class="stat-badge" style="background: #eee; color: #333;"><%= stats.total || 0 %></span></div>
+                    <a href="/admin" class="btn-unand" style="background: #333;">Buka Radar Global</a>
                 </div>
                 <% } %>
 
@@ -114,93 +93,5 @@
         <% } %>
 
     </div>
-
-    <script>
-        let currentSelectedRole = '';
-        let failedAttempts = 0; // The strike counter
-
-        // THE SECRET PASSWORDS
-        const securityPins = {
-            'kaprodi': 'prodi123',
-            'wd1': 'dekan123',
-            'admin': 'admin123'
-        };
-
-        function showLogin(role) {
-            // Block access if they are already locked out
-            if (failedAttempts >= 3) {
-                document.getElementById('globalLockAlert').style.display = 'block';
-                return;
-            }
-
-            currentSelectedRole = role;
-            
-            // Hide selection, show form
-            document.getElementById('roleSelection').style.display = 'none';
-            document.getElementById('passwordForm').style.display = 'block';
-
-            // Change title dynamically
-            let title = 'Otentikasi Admin';
-            if (role === 'kaprodi') title = 'Otentikasi Kaprodi';
-            if (role === 'wd1') title = 'Otentikasi Wakil Dekan 1';
-            document.getElementById('loginTitle').innerText = title;
-            
-            // Clear inputs and reset UI colors
-            document.getElementById('passwordInput').value = '';
-            document.getElementById('emailInput').value = '';
-            document.getElementById('passwordInput').style.borderColor = '#ccc';
-        }
-
-        function cancelLogin() {
-            document.getElementById('roleSelection').style.display = 'block';
-            document.getElementById('passwordForm').style.display = 'none';
-        }
-
-        function verifyLogin() {
-            // Failsafe block
-            if (failedAttempts >= 3) return;
-
-            const email = document.getElementById('emailInput').value;
-            const pin = document.getElementById('passwordInput').value;
-
-            if (!email || !pin) {
-                alert('Email dan PIN tidak boleh kosong!');
-                return;
-            }
-
-            // Check if the PIN matches the role
-            if (pin === securityPins[currentSelectedRole]) {
-                // Success! Redirect them to their protected dashboard
-                window.location.href = '/?role=' + currentSelectedRole;
-            } else {
-                // Failure! Add a strike
-                failedAttempts++;
-                const attemptsLeft = 3 - failedAttempts;
-                
-                document.getElementById('passwordInput').style.borderColor = 'red';
-                document.getElementById('passwordInput').value = '';
-
-                if (attemptsLeft > 0) {
-                    alert(`❌ AKSES DITOLAK: PIN salah. Sisa percobaan: ${attemptsLeft}`);
-                } else {
-                    // Strike 3 - Trigger the lockout sequence
-                    alert('🚨 PERINGATAN KEAMANAN: 3 Kali Gagal. Akses Anda Diblokir!');
-                    
-                    // Disable the form completely
-                    document.getElementById('passwordInput').disabled = true;
-                    document.getElementById('emailInput').disabled = true;
-                    
-                    // Turn the login button red and disable it
-                    const loginBtn = document.getElementById('loginBtn');
-                    loginBtn.disabled = true;
-                    loginBtn.style.background = '#dc3545';
-                    loginBtn.innerText = 'AKSES TERKUNCI';
-                    
-                    document.getElementById('loginSubtitle').innerText = 'Sistem mendeteksi aktivitas mencurigakan. Hubungi Administrator.';
-                    document.getElementById('loginSubtitle').style.color = 'red';
-                }
-            }
-        }
-    </script>
 </body>
 </html>

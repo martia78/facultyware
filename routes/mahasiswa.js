@@ -4,6 +4,6 @@ const mahasiswaController = require('../controllers/mahasiswaController');
 const { isAuthenticated } = require('../middlewares/auth');
 const { authorize }       = require('../middlewares/acl');
 
-router.get('/dashboard', isAuthenticated, authorize(['mahasiswa']), mahasiswaController.dashboard);
+router.get('/', isAuthenticated, authorize(['mahasiswa']), mahasiswaController.getDashboard);
 
 module.exports = router;

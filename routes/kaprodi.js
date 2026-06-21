@@ -4,6 +4,6 @@ const kaprodiController = require('../controllers/kaprodiController');
 const { isAuthenticated } = require('../middlewares/auth');
 const { authorize }       = require('../middlewares/acl');
 
-router.get('/dashboard', isAuthenticated, authorize(['kaprodi']), kaprodiController.dashboard);
+router.get('/', authorize(['kaprodi']), kaprodiController.getDashboard);
 
 module.exports = router;

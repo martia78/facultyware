@@ -21,6 +21,9 @@ const loginPage = (req, res) => {
 const login = async (req, res, next) => {
   const { username, password } = req.body;
 
+  // 1. FORCE REMOVE HIDDEN SPACES (This is the critical fix!)
+  const cleanPassword = password ? password.trim() : '';
+
   if (!username || !password) {
     return res.render('login', {
       title: 'Login',
@@ -42,6 +45,7 @@ const login = async (req, res, next) => {
     );
 
     if (rows.length === 0) {
+      console.log("❌ LOGIN FAILED: Username not found in database."); // ADD THIS
       return res.render('login', {
         title: 'Login',
         error: 'Username atau password salah.',
@@ -49,7 +53,21 @@ const login = async (req, res, next) => {
     }
 
     const user    = rows[0];
-    const isMatch = await bcrypt.compare(password, user.password);
+
+    // 2. THE X-RAY LOGS: Let's see exactly how long the strings are
+    console.log("--- BCRYPT DIAGNOSTIC ---");
+    console.log("Raw Input Password Length:", cleanPassword.length, "(Should be 11)");
+    console.log("DB Hash Length:", user.password.length, "(MUST be exactly 60)");
+    console.log("DB Hash Value:", user.password);
+
+// 3. COMPARE USING THE CLEANED PASSWORD
+    const isMatch = await bcrypt.compare(cleanPassword, user.password);
+    console.log("🔑 BCRYPT MATCH RESULT:", isMatch);
+    console.log("-------------------------");
+
+    // ADD THESE TWO LINES
+    console.log("✅ USER FOUND:", user.username, "| ROLE:", user.role);
+    console.log("🔑 BCRYPT MATCH RESULT:", isMatch);
 
     if (!isMatch) {
       return res.render('login', {
@@ -75,11 +93,18 @@ const dashboard = (req, res, next) => {
   const role = req.session.role;
 
   switch (role) {
-    case 'mahasiswa': return res.redirect('/mahasiswa/dashboard');
-    case 'admin':     return res.redirect('/admin/dashboard');
-    case 'kaprodi':   return res.redirect('/kaprodi/dashboard');
-    case 'dekan':     return res.redirect('/dekan/dashboard');
-    default:          return res.redirect('/login');
+    case 'mahasiswa': 
+        return res.redirect('/mahasiswa');
+    case 'admin':     
+        return res.redirect('/admin');
+    case 'kaprodi':   
+        return res.redirect('/kaprodi');
+    case 'dekan':       
+        return res.redirect('/dekan');
+    case 'dekan':     
+        return res.redirect('/dekan'); // Failsafe: Just in case the DB still says 'dekan'
+    default:          
+        return res.redirect('/'); // Failsafe: Send unknown users to the Master Portal
   }
 };
 
@@ -87,7 +112,8 @@ const dashboard = (req, res, next) => {
 const logout = (req, res, next) => {
   req.session.destroy((err) => {
     if (err) return next(err);
-    res.redirect('/login');
+    // After logout, returning to the Master Portal looks much more professional
+    res.redirect('/'); 
   });
 };
 

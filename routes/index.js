@@ -4,7 +4,7 @@ const indexController = require('../controllers/indexController');
 const { isAuthenticated, isGuest } = require('../middlewares/auth');
 
 // Root
-router.get('/', indexController.index);
+//router.get('/', indexController.index);
 
 // Auth
 router.get('/login',    isGuest,         indexController.loginPage);

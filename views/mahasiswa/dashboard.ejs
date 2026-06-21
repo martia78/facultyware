@@ -16,8 +16,10 @@
             <div class="stat-card">
               <div class="stat-card-row">
                 <div>
-                  <div class="stat-card-label">Status Pengajuan</div>
-                  <div class="stat-card-value" style="font-size: 1.125rem; margin-top: 0.25rem;">Belum Ada</div>
+                  <div class="stat-card-label">Status Pengajuan Terbaru</div>
+                  <div class="stat-card-value" style="font-size: 1.125rem; margin-top: 0.25rem;">
+                    <%= requests.length > 0 ? requests[0].status : 'Belum Ada' %>
+                  </div>
                 </div>
                 <div class="stat-card-icon">
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/></svg>
@@ -29,7 +31,7 @@
               <div class="stat-card-row">
                 <div>
                   <div class="stat-card-label">Total Riwayat</div>
-                  <div class="stat-card-value">0</div>
+                  <div class="stat-card-value"><%= requests.length %></div>
                 </div>
                 <div class="stat-card-icon">
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
@@ -41,7 +43,7 @@
               <div class="stat-card-row">
                 <div>
                   <div class="stat-card-label">NIM</div>
-                  <div class="stat-card-value" style="font-size: 1.125rem; margin-top: 0.25rem;"><%= user ? user.username : '—' %></div>
+                  <div class="stat-card-value" style="font-size: 1.125rem; margin-top: 0.25rem;"><%= student.regno %></div>
                 </div>
                 <div class="stat-card-icon">
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M6 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg>
@@ -56,49 +58,69 @@
               <p>Ajukan permohonan baru atau pantau status pengajuan Anda saat ini.</p>
             </header>
             <section>
-              <div class="empty-state">
-                <div class="empty-state-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16m8-8H4"/></svg>
+              <% if (requests.length === 0 || requests[0].status === 'Approved' || requests[0].status === 'Rejected') { %>
+                <div class="empty-state">
+                  <div class="empty-state-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16m8-8H4"/></svg>
+                  </div>
+                  <h3 class="empty-state-title">Anda belum memiliki pengajuan aktif</h3>
+                  <p class="empty-state-desc">
+                    Jika Anda berniat mengundurkan diri, siapkan surat pernyataan dan dokumen pendukung dalam format PDF sebelum mengajukan.
+                  </p>
+                  <a href="/mahasiswa/submissions/create" class="btn-primary mt-4">
+                    Ajukan Pengunduran Diri
+                  </a>
                 </div>
-                <h3 class="empty-state-title">Anda belum memiliki pengajuan aktif</h3>
-                <p class="empty-state-desc">
-                  Jika Anda berniat mengundurkan diri, siapkan surat pernyataan dan dokumen pendukung dalam format PDF sebelum mengajukan.
-                </p>
-                <a href="/mahasiswa/submissions/create" class="btn-primary mt-4">
-                  Ajukan Pengunduran Diri
-                </a>
-              </div>
+              <% } else { %>
+                <div style="padding: 1.5rem; background: #e6f4ea; border-radius: 8px; border-left: 5px solid #006837;">
+                    <h3 style="margin-top:0; color: #006837;">Pengajuan Sedang Diproses</h3>
+                    <p><strong>No Surat:</strong> <%= requests[0].no_surat %></p>
+                    <p><strong>Status Saat Ini:</strong> <span style="font-weight:bold; color:#856404;"><%= requests[0].status %></span></p>
+                    <p>Berkas Anda sedang dalam tahap peninjauan oleh Fakultas.</p>
+                </div>
+              <% } %>
             </section>
           </div>
 
           <div class="card">
             <header>
               <h2>Riwayat Pengajuan Terbaru</h2>
-              <p>Tiga pengajuan terakhir yang Anda kirimkan.</p>
+              <p>Pengajuan yang Anda kirimkan.</p>
             </header>
             <section>
               <div class="table-wrap">
                 <table class="table">
                   <thead>
                     <tr>
+                      <th>No Surat</th>
                       <th>Tanggal</th>
                       <th>Status</th>
-                      <th></th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td colspan="3" class="text-center text-muted-foreground" style="padding: 2rem 0;">
-                        Belum ada riwayat pengajuan.
-                      </td>
-                    </tr>
+                    <% if (requests.length === 0) { %>
+                      <tr>
+                        <td colspan="3" class="text-center text-muted-foreground" style="padding: 2rem 0;">
+                          Belum ada riwayat pengajuan.
+                        </td>
+                      </tr>
+                    <% } else { %>
+                      <% requests.forEach(req => { %>
+                        <tr>
+                          <td><strong><%= req.no_surat %></strong></td>
+                          <td><%= new Date(req.requested_at).toLocaleDateString('id-ID') %></td>
+                          <td>
+                            <span style="padding: 4px 8px; border-radius: 4px; background: #eee; font-weight: bold; font-size: 0.85rem;">
+                              <%= req.status %>
+                            </span>
+                          </td>
+                        </tr>
+                      <% }) %>
+                    <% } %>
                   </tbody>
                 </table>
               </div>
             </section>
-            <footer>
-              <a href="/mahasiswa/submissions" class="btn-link" style="padding: 0;">Lihat semua riwayat &rarr;</a>
-            </footer>
           </div>
 
         </div>

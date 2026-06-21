@@ -7,7 +7,6 @@ const logger     = require('morgan');
 const session    = require('express-session');
 const MySQLStore = require('express-mysql-session')(session);
 
-const indexRouter = require('./routes/index');
 const { notFoundHandler, errorHandler } = require('./middlewares/error');
 
 const app = express();
@@ -60,10 +59,8 @@ app.use((req, res, next) => {
 // ─── Routes ───────────────────────────────────────────────
 // 1. First, require the routers (Initialize them)
 const dashboardController = require('./controllers/dashboardController');
-const b16Router = require('./routes/b16Routes');
+const indexRouter = require('./routes/index'); // Martia's auth/login routes
 
-// 2. Tell the app to use B16 and the Unified Dashboard
-app.use('/b16', b16Router);
 app.get('/', dashboardController.index);
 
 // 3. RECONNECT MARTIA'S MAIN VIEWS (Login, Index, dll)

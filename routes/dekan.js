@@ -4,6 +4,6 @@ const dekanController = require('../controllers/dekanController');
 const { isAuthenticated } = require('../middlewares/auth');
 const { authorize }       = require('../middlewares/acl');
 
-router.get('/dashboard', isAuthenticated, authorize(['dekan']), dekanController.dashboard);
+router.get('/', isAuthenticated, dekanController.getDashboard);
 
 module.exports = router;
