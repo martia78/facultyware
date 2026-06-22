@@ -33,7 +33,7 @@ const submissionRules = [
   body('reason')
     .trim()
     .notEmpty().withMessage('Alasan pengunduran diri wajib diisi.')
-    .isLength({ max: 255 }).withMessage('Alasan pengunduran diri maksimal 255 karakter.'),
+    .isLength({ max: 255 }).withMessage('Alasan pengunduran diri.'),
   body('address')
     .trim()
     .notEmpty().withMessage('Alamat wajib diisi.')

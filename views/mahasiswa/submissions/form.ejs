@@ -418,6 +418,20 @@
 
     <div id="toaster" class="toaster"></div>
     <script src="/assets/js/basecoat.js"></script>
+    <% if (flash && flash.type === 'success') { %>
+    <div id="flash-success-msg" data-msg="<%- JSON.stringify(flash.message) %>" style="display:none;"></div>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const el = document.getElementById('flash-success-msg');
+        if (el) {
+          const msg = JSON.parse(el.dataset.msg);
+          document.dispatchEvent(new CustomEvent('basecoat:toast', {
+            detail: { config: { category: 'success', title: msg } }
+          }));
+        }
+      });
+    </script>
+    <% } %>
     <script>
       function updateFileName(input, displayId, dropzoneId, maxMB) {
         const display  = document.getElementById(displayId);

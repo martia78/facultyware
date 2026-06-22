@@ -247,7 +247,7 @@ const submit = async (req, res, next) => {
     flashSuccess(req, 'Permohonan pengunduran diri berhasil diajukan.');
     res.redirect(`/mahasiswa/submissions/${req.params.id}`);
   } catch (err) {
-    if (err.message?.includes('Draft') || err.message?.includes('wajib diunggah')) {
+    if (err.message?.includes('Draft') || err.message?.includes('wajib diunggah') || err.message?.includes('Data belum lengkap')) {
       flashError(req, err.message); return res.redirect(`/mahasiswa/submissions/${req.params.id}`);
     }
     next(err);
@@ -259,7 +259,7 @@ const destroy = async (req, res, next) => {
   try {
     await model.deleteSubmission(req.params.id, req.session.userId);
     flashSuccess(req, 'Draft berhasil dihapus.');
-    res.redirect('/mahasiswa/submissions');
+    res.redirect('/mahasiswa/dashboard');
   } catch (err) {
     if (err.message?.includes('Draft')) { flashError(req, err.message); return res.redirect(`/mahasiswa/submissions/${req.params.id}`); }
     next(err);

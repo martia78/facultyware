@@ -77,11 +77,33 @@
                 <div class="empty-state-icon">
                   <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16m8-8H4"/></svg>
                 </div>
-                <h3 class="empty-state-title">Anda belum memiliki pengajuan aktif</h3>
+                <h3 class="empty-state-title">Belum Ada Pengajuan Aktif</h3>
                 <p class="empty-state-desc">
                   Jika Anda berniat mengundurkan diri, siapkan Surat Permohonan dalam format PDF (maks. 5 MB) sebelum mengajukan.
                 </p>
-                <a href="/mahasiswa/submissions/create" class="btn-primary mt-4">Ajukan Pengunduran Diri</a>
+                <a href="/mahasiswa/submissions/create" class="btn-primary mt-4">Buat Pengajuan</a>
+              </div>
+            </div>
+          </div>
+          <% } else { %>
+          <div class="dash-card">
+            <div class="dash-card-body" style="padding-top:1.25rem;">
+              <div style="display:flex;flex-direction:column;gap:0.75rem;">
+                <div style="display:flex;gap:1rem;flex-wrap:wrap;align-items:center;justify-content:space-between;">
+                  <div>
+                    <p style="margin:0;font-size:0.8125rem;color:var(--muted-foreground);">Nomor Pengajuan</p>
+                    <code style="font-size:0.9rem;font-weight:600;"><%= latest.request_number %></code>
+                  </div>
+                  <div>
+                    <p style="margin:0;font-size:0.8125rem;color:var(--muted-foreground);">Status Pengajuan</p>
+                    <span class="badge <%= STATUS_BADGE[latest.status] || 'badge--gray' %>"><%= STATUS_LABEL[latest.status] || '—' %></span>
+                  </div>
+                  <div>
+                    <p style="margin:0;font-size:0.8125rem;color:var(--muted-foreground);">Tanggal Pengajuan</p>
+                    <p style="margin:0;font-size:0.875rem;"><%= latest.requested_at ? new Date(latest.requested_at).toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'}) : '—' %></p>
+                  </div>
+                  <a href="/mahasiswa/submissions/<%= latest.id %>" class="btn-primary" style="white-space:nowrap;">Lihat Detail</a>
+                </div>
               </div>
             </div>
           </div>
