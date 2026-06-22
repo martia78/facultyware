@@ -11,7 +11,7 @@ const db = require('../lib/db');
  * Contoh penggunaan:
  *   router.get('/api/submissions',
  *     verifyJWT,
- *     authorizeApi(['admin', 'kaprodi', 'dekan']),
+ *     authorizeApi(['admin', 'kaprodi', 'wd1']),
  *     controller.index);
  *
  *   router.post('/api/submissions',

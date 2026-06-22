@@ -11,14 +11,14 @@ exports.getDashboard = async (req, res) => {
             ORDER BY sr.requested_at DESC
         `);
         
-        res.render('dekan/dashboard', {
+        res.render('wd1/dashboard', {
             pageTitle: 'Inbox Pengesahan WD1',
             role: req.session.role,
             user: req.session,
             requests: requests
         });
     } catch (error) {
-        console.error("Dekan Dashboard Error:", error);
+        console.error("wd1 Dashboard Error:", error);
         res.status(500).send("Server Error");
     }
 };

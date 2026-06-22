@@ -12,7 +12,7 @@ async function seed() {
       { name: 'mahasiswa',  guard_name: 'web' },
       { name: 'admin',      guard_name: 'web' },
       { name: 'kaprodi',    guard_name: 'web' },
-      { name: 'dekan',      guard_name: 'web' },
+      { name: 'wd1',      guard_name: 'web' },
     ];
 
     for (const role of roles) {
@@ -22,7 +22,7 @@ async function seed() {
         [role.name, role.guard_name]
       );
     }
-    console.log('   ✓ Roles dibuat: mahasiswa, admin, kaprodi, dekan');
+    console.log('   ✓ Roles dibuat: mahasiswa, admin, kaprodi, wd1');
 
     // Ambil ID roles
     const [roleRows] = await db.query('SELECT id, name FROM roles WHERE guard_name = "web"');
@@ -45,7 +45,7 @@ async function seed() {
       // Kaprodi
       { name: 'submission.approve-prodi',  guard_name: 'web' },
       { name: 'submission.reject-prodi',   guard_name: 'web' },
-      // Dekan
+      // wd1
       { name: 'submission.approve-final',  guard_name: 'web' },
       { name: 'submission.reject-final',   guard_name: 'web' },
     ];
@@ -84,7 +84,7 @@ async function seed() {
         'submission.approve-prodi',
         'submission.reject-prodi',
       ],
-      dekan: [
+      wd1: [
         'submission.view-all',
         'submission.approve-final',
         'submission.reject-final',
@@ -113,7 +113,7 @@ async function seed() {
       { username: 'mahasiswa01', password: 'password123', name: 'Budi Santoso',   email: 'budi@student.ac.id',   role: 'mahasiswa' },
       { username: 'admin01',     password: 'password123', name: 'Siti Rahayu',    email: 'siti@univ.ac.id',      role: 'admin'     },
       { username: 'kaprodi01',   password: 'password123', name: 'Dr. Ahmad Fauzi', email: 'ahmad@univ.ac.id',   role: 'kaprodi'   },
-      { username: 'dekan01',     password: 'password123', name: 'Prof. Hendra W.', email: 'hendra@univ.ac.id',  role: 'dekan'     },
+      { username: 'wd101',     password: 'password123', name: 'Prof. Hendra W.', email: 'hendra@univ.ac.id',  role: 'wd1'     },
     ];
 
     for (const u of users) {
@@ -192,7 +192,7 @@ async function seed() {
     console.log('  mahasiswa01 / password123  → role: mahasiswa');
     console.log('  admin01     / password123  → role: admin akademik');
     console.log('  kaprodi01   / password123  → role: ketua program studi');
-    console.log('  dekan01     / password123  → role: dekan');
+    console.log('  wd101     / password123  → role: wd1');
 
     process.exit(0);
   } catch (err) {

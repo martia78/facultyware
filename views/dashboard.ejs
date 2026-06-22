@@ -47,7 +47,7 @@
                 
                 <a href="/login" class="role-btn" style="background: #0056b3;">🎓 Portal Mahasiswa</a>
                 <a href="/login" class="role-btn" style="background: #28a745;">👨‍🏫 Portal Ketua Program Studi</a>
-                <a href="/login" class="role-btn" style="background: #d39e00;">🏛️ Portal Wakil Dekan 1</a>
+                <a href="/login" class="role-btn" style="background: #d39e00;">🏛️ Portal Wakil wd1 1</a>
                 <a href="/login" class="role-btn" style="background: #333;">🔍 Portal Admin Akademik</a>
                 
                 <p style="font-size: 0.85rem; color: #999; margin-top: 1.5rem;">Sistem dilengkapi otentikasi terpusat. Anda akan diarahkan ke halaman login yang aman.</p>
@@ -73,10 +73,10 @@
 
                 <% if (role === 'wd1') { %>
                 <div class="menu-card" style="border-top: 4px solid var(--unand-yellow);">
-                    <h3 style="color: #856404; margin-top:0;">Panel Wakil Dekan 1</h3>
+                    <h3 style="color: #856404; margin-top:0;">Panel Wakil wd1 1</h3>
                     <p>Fitur pengesahan akhir Surat Keputusan (SK) Pengunduran Diri.</p>
                     <div style="margin: 1rem 0;">Menunggu Pengesahan: <span class="stat-badge" style="background:#fff3cd; color:#856404;"><%= stats.wd1 || 0 %></span></div>
-                    <a href="/dekan" class="btn-unand" style="background: #d39e00;">Buka Inbox dekan</a>
+                    <a href="/wd1" class="btn-unand" style="background: #d39e00;">Buka Inbox wd1</a>
                 </div>
                 <% } %>
 

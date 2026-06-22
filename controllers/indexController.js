@@ -99,10 +99,10 @@ const dashboard = (req, res, next) => {
         return res.redirect('/admin');
     case 'kaprodi':   
         return res.redirect('/kaprodi');
-    case 'dekan':       
-        return res.redirect('/dekan');
-    case 'dekan':     
-        return res.redirect('/dekan'); // Failsafe: Just in case the DB still says 'dekan'
+    case 'wd1':       
+        return res.redirect('/wd1');
+    case 'wd1':     
+        return res.redirect('/wd1'); // Failsafe: Just in case the DB still says 'wd1'
     default:          
         return res.redirect('/'); // Failsafe: Send unknown users to the Master Portal
   }
