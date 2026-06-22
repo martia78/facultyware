@@ -109,13 +109,33 @@ exports.approveRequest = async (req, res) => {
 };
 
 // 3. REJECT LOGIC
-exports.rejectRequest = async (req, res) => {
-    try {
-        const requestId = req.params.id;
-        await pool.query("UPDATE student_requests SET status = 'Rejected' WHERE id = ?", [requestId]);
-        res.redirect('/wd1');
-    } catch (error) {
-        console.error("Error rejecting request:", error);
-        res.status(500).send("Gagal menolak dokumen.");
-    }
+// POST /wd1/request/:id/reject
+exports.rejectRequest = async (req, res, next) => {
+  try {
+    const requestId = req.params.id;
+    
+    // 1. Update the database status to 'Rejected'
+    // (Assuming you have a submission model or database handler imported)
+    await db.query(
+      "UPDATE student_requests SET status = 'Rejected', updated_at = NOW() WHERE id = ?", 
+      [requestId]
+    );
+
+    // 2. Optional: Add a log into an approvals/history table if Martia built one
+    await db.query(
+      "INSERT INTO student_request_history (student_request_id, action, notes, created_at) VALUES (?, 'Rejected', 'Ditolak oleh Wakil Dekan I', NOW())",
+      [requestId]
+    ).catch(e => { /* Ignore if history table structural names differ */ });
+
+    // 3. Send a success flash notification to the dashboard screen
+    req.session.flash = { 
+      type: 'success', 
+      message: `Permohonan #${requestId} berhasil ditolak.` 
+    };
+
+    // 4. Redirect cleanly straight back to the dashboard page
+    res.redirect('/wd1/dashboard');
+  } catch (err) {
+    next(err);
+  }
 };

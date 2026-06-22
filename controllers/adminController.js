@@ -60,27 +60,48 @@ exports.getUsers = async (req, res) => {
 };
 
 // 4. User Management (Create)
-exports.addUser = async (req, res) => {
+exports.addUser = async (req, res, next) => {
     try {
-        const { username, name, password, role_id } = req.body;
-        
-        const hashedPassword = await bcrypt.hash(password.trim(), 10);
-        
-        const [result] = await pool.query(
-            "INSERT INTO users (username, name, password) VALUES (?, ?, ?)", 
-            [username, name, hashedPassword]
-        );
-        const newUserId = result.insertId;
+        const { username, name, email, password, role } = req.body;
 
-        await pool.query(
-            "INSERT INTO user_has_roles (user_id, role_id) VALUES (?, ?)", 
-            [newUserId, role_id]
-        );
+        // 1. Hash the password for security
+        const hashedPassword = await bcrypt.hash(password, 10);
 
+        // 2. Insert into the main users table
+        const [userResult] = await pool.query(
+            "INSERT INTO users (username, name, email, password, created_at, updated_at) VALUES (?, ?, ?, ?, NOW(), NOW())",
+            [username.trim(), name.trim(), email ? email.trim() : null, hashedPassword]
+        );
+        const userId = userResult.insertId;
+
+        // 3. Attach the Role to the user
+        let roleId = role;
+        // If the form sent a text name (like 'Mahasiswa') instead of an ID number, look up the ID first
+        if (isNaN(role)) {
+            const [roleRows] = await pool.query("SELECT id FROM roles WHERE name = ?", [role]);
+            if (roleRows.length > 0) roleId = roleRows[0].id;
+        }
+        
+        if (roleId) {
+            await pool.query("INSERT INTO user_has_roles (user_id, role_id) VALUES (?, ?)", [userId, roleId]);
+        }
+
+        // 4. THE GHOST BUG FIX: If it's a student, automatically build their academic profile!
+        const [roleCheck] = await pool.query("SELECT name FROM roles WHERE id = ?", [roleId]);
+        const roleName = roleCheck.length > 0 ? roleCheck[0].name.toLowerCase() : String(role).toLowerCase();
+
+        if (roleName === 'mahasiswa' || roleName === 'student') {
+            await pool.query(
+                "INSERT INTO students (user_id, regno, name, department_id, created_at, updated_at) VALUES (?, ?, ?, 1, NOW(), NOW())",
+                [userId, username.trim(), name.trim()] // Using username as their NIM/Regno
+            );
+        }
+
+        // 5. Success! Bounce back to the user list
         res.redirect('/admin/users');
-    } catch (error) {
-        console.error("Error adding user:", error);
-        res.status(500).send("Gagal menambahkan pengguna.");
+    } catch (err) {
+        console.error("Error adding user:", err);
+        res.status(500).send("Terjadi kesalahan saat menambah pengguna.");
     }
 };
 
