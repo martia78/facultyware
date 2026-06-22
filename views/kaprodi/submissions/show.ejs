@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <%- include('../../partials/head', { title: pageTitle }) %>
+  </head>
+  <body class="page-shell">
+    <%- include('../../partials/sidebar') %>
+
+    <div class="app-main">
+      <%- include('../../partials/topbar') %>
+
+      <main class="app-content">
+        <div class="content-narrow">
+
+          <%# ── Breadcrumb ──────────────────────────────────────── %>
+          <nav class="form-breadcrumb" aria-label="Breadcrumb">
+            <a href="/kaprodi/dashboard">Dashboard</a>
+            <span class="form-breadcrumb-sep">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </span>
+            <a href="/kaprodi/submissions">Daftar Pengajuan</a>
+            <span class="form-breadcrumb-sep">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </span>
+            <span class="form-breadcrumb-current">Detail Pengajuan</span>
+          </nav>
+
+          <%# Flash %>
+          <% if (flash) { %>
+          <div class="alert alert--<%= flash.type === 'success' ? 'success' : 'danger' %> mb-5">
+            <%= flash.message %>
+          </div>
+          <% } %>
+
+          <div class="form-page-card">
+
+            <div class="form-page-header">
+              <div class="form-page-header-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+              </div>
+              <div>
+                <h1 class="form-page-header-title">Detail Pengajuan Pengunduran Diri</h1>
+                <p class="form-page-header-meta">Nomor Permohonan: <strong><code><%= submission.request_number %></code></strong></p>
+              </div>
+              <span class="badge <%= STATUS_BADGE[submission.status] || 'badge--gray' %>" style="margin-left:auto;">
+                <%= STATUS_LABEL[submission.status] || submission.status %>
+              </span>
+            </div>
+
+            <%# ── 1. DATA MAHASISWA ─────────────────────────────────────── %>
+            <p class="form-section-heading">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M6 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg>
+              Data Mahasiswa
+            </p>
+            <div class="form-grid" style="margin-bottom:0.5rem;">
+              <div class="form-group">
+                <label class="form-label">Nama Mahasiswa</label>
+                <input class="form-input" type="text" value="<%= submission.student_name || '—' %>" readonly>
+              </div>
+              <div class="form-group">
+                <label class="form-label">NIM</label>
+                <input class="form-input" type="text" value="<%= submission.student_nim || '—' %>" readonly>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Program Studi</label>
+                <input class="form-input" type="text" value="<%= submission.department_name || '—' %>" readonly>
+              </div>
+            </div>
+
+            <%# ── 2. DATA PENGAJUAN ─────────────────────────────────────── %>
+            <p class="form-section-heading">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              Data Pengajuan
+            </p>
+            <div class="form-grid" style="margin-bottom:0.5rem;">
+              <div class="form-group">
+                <label class="form-label">Nomor Pengajuan</label>
+                <input class="form-input" type="text" value="<%= submission.request_number %>" readonly>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Tanggal Pengajuan</label>
+                <input class="form-input" type="text" value="<%= submission.requested_at ? new Date(submission.requested_at).toLocaleDateString('id-ID', { day:'2-digit', month:'long', year:'numeric' }) : '—' %>" readonly>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Status</label>
+                <input class="form-input" type="text" value="<%= STATUS_LABEL[submission.status] || submission.status %>" readonly>
+              </div>
+            </div>
+
+            <%# ── 3. DETAIL PENGUNDURAN DIRI ────────────────────────────── %>
+            <p class="form-section-heading">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+              Detail Pengunduran Diri
+            </p>
+            <div class="form-grid" style="margin-bottom:0.5rem;">
+              <div class="form-group">
+                <label class="form-label">Alamat Mahasiswa</label>
+                <textarea class="form-textarea" rows="2" readonly><%= submission.student_address || '—' %></textarea>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Nomor HP</label>
+                <input class="form-input" type="text" value="<%= submission.student_hp || '—' %>" readonly>
+              </div>
+              <div class="form-group">
+                <label class="form-label">IPK</label>
+                <input class="form-input" type="text" value="<%= submission.gpa ?? '—' %>" readonly>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Jumlah SKS</label>
+                <input class="form-input" type="text" value="<%= submission.total_sks ?? '—' %>" readonly>
+              </div>
+              <div class="form-group span-2">
+                <label class="form-label">Alasan Pengunduran Diri</label>
+                <textarea class="form-textarea" rows="3" readonly><%= submission.reason || '—' %></textarea>
+              </div>
+            </div>
+
+            <%# ── 4. DOKUMEN ────────────────────────────────────────────── %>
+            <p class="form-section-heading">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              Dokumen
+            </p>
+            <div class="existing-file" style="margin-bottom:1.5rem;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <span>Surat Permohonan: <strong><%= submission.application_letter_file || '—' %></strong></span>
+              <% if (submission.application_letter_file) { %>
+              <a href="/kaprodi/submissions/<%= submission.id %>/document" target="_blank" rel="noopener" class="btn-outline-icon btn-outline-icon--sm existing-file-link">
+                Lihat PDF
+              </a>
+              <a href="/kaprodi/submissions/<%= submission.id %>/document?download=1" class="btn-outline-icon btn-outline-icon--sm">
+                Download PDF
+              </a>
+              <% } %>
+            </div>
+
+            <%# ── AKSI ───────────────────────────────────────────────────── %>
+            <div class="form-actions-row">
+              <a href="/kaprodi/submissions" class="btn-outline-icon">Kembali ke Daftar</a>
+              <% if (submission.status === STATUS.MENUNGGU_PRODI) { %>
+              <button type="button" class="btn-danger-icon" onclick="document.getElementById('dialog-reject').showModal()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                Tolak
+              </button>
+              <button type="button" class="btn-primary-icon" onclick="document.getElementById('dialog-approve').showModal()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                Setujui
+              </button>
+              <% } %>
+            </div>
+
+          </div>
+
+          <%# Riwayat Persetujuan (jika sudah pernah diputuskan) %>
+          <% if (history && history.length > 0) { %>
+          <div class="content-narrow" style="margin-top:1.5rem; padding:0;">
+            <div class="form-page-card">
+              <p class="form-section-heading" style="margin-top:0;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                Riwayat Persetujuan
+              </p>
+              <% history.forEach(h => { %>
+              <div style="padding:.75rem;border:1px solid var(--border);border-radius:.625rem;margin-bottom:.625rem;display:flex;gap:.75rem;flex-wrap:wrap;align-items:flex-start;">
+                <span class="badge badge--blue"><%= h.level %></span>
+                <div style="flex:1;min-width:0;">
+                  <strong style="font-size:.9rem;"><%= h.approver_name || 'Unknown' %></strong>
+                  <span style="font-size:.8rem;color:var(--muted-foreground);"> — <%= h.approval_position %></span>
+                  <% if (h.approval_reason) { %><p style="margin:.25rem 0 0;font-size:.875rem;"><%= h.approval_reason %></p><% } %>
+                </div>
+                <span style="font-size:.8rem;color:var(--muted-foreground);">
+                  <%= h.created_at ? new Date(h.created_at).toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'}) : '' %>
+                </span>
+              </div>
+              <% }) %>
+            </div>
+          </div>
+          <% } %>
+
+        </div>
+      </main>
+    </div>
+
+    <%# ── Dialog konfirmasi: Setujui ────────────────────────────────────── %>
+    <dialog class="dialog" id="dialog-approve">
+      <article>
+        <header>
+          <h2>Setujui Pengajuan?</h2>
+        </header>
+        <section>
+          <p>Apakah Anda yakin ingin menyetujui pengajuan ini?</p>
+          <p class="dialog-note">Pengajuan akan diteruskan ke Wakil Dekan I untuk keputusan akhir.</p>
+        </section>
+        <footer>
+          <button type="button" class="btn-outline-icon" onclick="document.getElementById('dialog-approve').close()">Batal</button>
+          <form method="POST" action="/kaprodi/submissions/<%= submission.id %>/approve">
+            <button type="submit" class="btn-primary-icon">Ya, Setujui</button>
+          </form>
+        </footer>
+      </article>
+    </dialog>
+
+    <%# ── Dialog konfirmasi: Tolak (wajib isi alasan) ─────────────────────── %>
+    <dialog class="dialog" id="dialog-reject">
+      <article>
+        <header>
+          <h2>Tolak Pengajuan?</h2>
+        </header>
+        <form method="POST" action="/kaprodi/submissions/<%= submission.id %>/reject">
+          <section>
+            <p>Apakah Anda yakin ingin menolak pengajuan ini?</p>
+            <div class="form-group" style="margin-top:0.75rem;">
+              <label class="form-label" for="note">
+                Alasan Penolakan <span class="required">*</span>
+              </label>
+              <textarea
+                class="form-textarea"
+                id="note"
+                name="note"
+                rows="3"
+                placeholder="Jelaskan alasan penolakan pengajuan ini"
+                required
+              ></textarea>
+            </div>
+          </section>
+          <footer>
+            <button type="button" class="btn-outline-icon" onclick="document.getElementById('dialog-reject').close()">Batal</button>
+            <button type="submit" class="btn-danger-icon">Ya, Tolak Pengajuan</button>
+          </footer>
+        </form>
+      </article>
+    </dialog>
+
+    <div id="toaster" class="toaster"></div>
+    <script src="/assets/js/basecoat.js"></script>
+  </body>
+</html>

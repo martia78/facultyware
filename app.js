@@ -8,6 +8,7 @@ const session    = require('express-session');
 const MySQLStore = require('express-mysql-session')(session);
 
 const { notFoundHandler, errorHandler } = require('./middlewares/error');
+const usersRouter = require('./routes/users');
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // ─── Session dengan MySQL store ───────────────────────────
 const sessionStore = new MySQLStore({
@@ -46,13 +48,15 @@ app.use(session({
 
 // ─── Variabel global untuk semua view ─────────────────────
 app.use((req, res, next) => {
-  res.locals.user     = req.session.userId ? {
-    id:       req.session.userId,
+  res.locals.user = req.session.userId ? {
+    id: req.session.userId,
     username: req.session.username,
-    name:     req.session.name,
-    role:     req.session.role,
+    name: req.session.name,
+    role: req.session.role,
   } : null;
-  res.locals.appName  = 'Sistem Pengunduran Diri';
+
+  res.locals.appName = 'Sistem Pengunduran Diri';
+
   next();
 });
 
