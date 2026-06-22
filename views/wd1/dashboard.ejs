@@ -73,7 +73,7 @@
                   <tbody>
                     <% if (requests.length === 0) { %>
                       <tr>
-                        <td colspan="5" class="text-center text-muted-foreground" style="padding: 2rem 0;">
+                        <td colspan="6" class="text-center text-muted-foreground" style="padding: 2rem 0;">
                           Belum ada pengajuan yang menunggu keputusan akhir Anda.
                         </td>
                       </tr>
@@ -88,8 +88,13 @@
                               <%= req.status %>
                             </span>
                           </td>
-                          <td>
-                            <a href="/wd1/request/<%= req.id %>" class="btn-primary" style="background:#d39e00; border:none; padding:5px 10px; color:white; text-decoration:none; border-radius:4px; cursor:pointer;">Sahkan SK &rarr;</a>
+                          <td style="display: flex; gap: 5px;">
+                            <form action="/wd1/request/<%= req.id %>/approve" method="POST" onsubmit="return confirm('Terbitkan SK secara final?');">
+                              <button type="submit" style="background:#28a745; border:none; padding:5px 10px; color:white; border-radius:4px; cursor:pointer; font-weight:bold;">Tanda Tangani SK</button>
+                            </form>
+                            <form action="/wd1/request/<%= req.id %>/reject" method="POST" onsubmit="return confirm('Tolak dokumen ini?');">
+                              <button type="submit" style="background:#dc3545; border:none; padding:5px 10px; color:white; border-radius:4px; cursor:pointer; font-weight:bold;">Tolak</button>
+                            </form>
                           </td>
                         </tr>
                       <% }) %>

@@ -6,4 +6,9 @@ const { isAuthenticated } = require('../middlewares/auth');
 // Change '/dashboard' to '/'
 router.get('/', isAuthenticated, adminController.getDashboard);
 
+// Admin User Management Routes
+router.get('/users', isAuthenticated, adminController.getUsers);
+router.post('/users/add', isAuthenticated, adminController.addUser);
+router.post('/users/delete/:id', isAuthenticated, adminController.deleteUser);
+
 module.exports = router;
