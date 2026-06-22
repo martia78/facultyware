@@ -2,12 +2,13 @@ const pool = require('../lib/db');
 
 exports.getDashboard = async (req, res) => {
     try {
-        // WD1 needs to see all requests (eventually we will filter this to only show "Approved by Kaprodi")
+        // TASK 1 FIX: We restrict the query to ONLY show Kaprodi-approved documents
         const [requests] = await pool.query(`
             SELECT sr.id, sr.request_nunmber AS no_surat, sr.status, sr.requested_at, s.name, s.regno
             FROM student_requests sr
             JOIN students s ON sr.requested_by = s.id
-            WHERE sr.request_type = 'Resignation'
+            WHERE sr.request_type = 'Resignation' 
+              AND sr.status = 'Approved_Kaprodi' 
             ORDER BY sr.requested_at DESC
         `);
         
@@ -18,7 +19,32 @@ exports.getDashboard = async (req, res) => {
             requests: requests
         });
     } catch (error) {
-        console.error("wd1 Dashboard Error:", error);
+        console.error("WD1 Dashboard Error:", error);
         res.status(500).send("Server Error");
+    }
+};
+
+exports.approveRequest = async (req, res) => {
+    try {
+        const requestId = req.params.id;
+        // Update status to Approved (Final)
+        await pool.query("UPDATE student_requests SET status = 'Approved' WHERE id = ?", [requestId]);
+        res.redirect('/wd1');
+    } catch (error) {
+        console.error("Error approving request:", error);
+        res.status(500).send("Gagal menyetujui dokumen.");
+    }
+};
+
+exports.rejectRequest = async (req, res) => {
+    try {
+        const requestId = req.params.id;
+        const catatan = req.body.catatan || 'Ditolak oleh Wakil Dekan 1'; // Optional: If you add a notes text box later
+        // Update status to Rejected
+        await pool.query("UPDATE student_requests SET status = 'Rejected' WHERE id = ?", [requestId]);
+        res.redirect('/wd1');
+    } catch (error) {
+        console.error("Error rejecting request:", error);
+        res.status(500).send("Gagal menolak dokumen.");
     }
 };

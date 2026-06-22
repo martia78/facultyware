@@ -63,12 +63,15 @@
           </section>
 
           <div class="card">
-            <header style="display:flex; align-items:center; justify-content:space-between;">
+            <header style="display:flex; align-items:center; justify-content:space-between; flex-wrap: wrap; gap: 10px;">
               <div>
                 <h2>Pengajuan Aktif (Radar Lacak)</h2>
                 <p>Pengajuan yang dikirim mahasiswa dan menunggu pemeriksaan kelengkapan dokumen.</p>
               </div>
-              <a href="/admin/submissions" class="btn-sm-outline">Lihat Semua</a>
+              <form method="GET" action="/admin" style="display: flex; gap: 5px;">
+                <input type="text" name="search" placeholder="Cari NIM atau Nama..." value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>" style="padding: 6px 10px; border: 1px solid #ccc; border-radius: 4px;">
+                <button type="submit" style="background: #333; color: white; border: none; padding: 6px 15px; border-radius: 4px; cursor: pointer;">Cari</button>
+              </form>
             </header>
             <section>
               <div class="table-wrap">
