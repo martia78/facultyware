@@ -59,6 +59,11 @@ uploads/
 # dotenv environment variables file
 .env
 
+# Playwright
+playwright-report/
+test-results/
+tests/fixtures/
+
 # next.js build output
 .next
 
