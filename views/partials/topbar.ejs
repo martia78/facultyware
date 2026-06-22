@@ -1,5 +1,6 @@
 <header class="app-topbar">
-  <button type="button" class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Buka menu navigasi">
+  <%# Tombol toggle sidebar — berfungsi di mobile DAN desktop %>
+  <button type="button" class="sidebar-toggle-btn" id="sidebar-toggle-btn" aria-label="Toggle navigasi">
     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
   </button>
 
@@ -26,21 +27,40 @@
 
 <script>
   (() => {
-    const btn = document.getElementById('mobile-menu-btn');
+    const btn     = document.getElementById('sidebar-toggle-btn');
     const overlay = document.getElementById('mobile-menu-overlay');
     const sidebar = document.querySelector('.app-sidebar');
-    if (!btn || !overlay || !sidebar) return;
+    const main    = document.querySelector('.app-main');
+    if (!btn || !sidebar) return;
 
-    const close = () => {
+    const COLLAPSED_KEY = 'sidebar_collapsed';
+    const isDesktop = () => window.innerWidth >= 1024;
+
+    // Restore state dari localStorage
+    const collapsed = localStorage.getItem(COLLAPSED_KEY) === 'true';
+    if (isDesktop() && collapsed) {
+      sidebar.classList.add('app-sidebar--collapsed');
+      main?.classList.add('app-main--sidebar-collapsed');
+    }
+
+    const closeMobile = () => {
       sidebar.classList.remove('app-sidebar--mobile-open');
-      overlay.classList.remove('mobile-menu-overlay--open');
-    };
-    const open = () => {
-      sidebar.classList.add('app-sidebar--mobile-open');
-      overlay.classList.add('mobile-menu-overlay--open');
+      overlay?.classList.remove('mobile-menu-overlay--open');
     };
 
-    btn.addEventListener('click', open);
-    overlay.addEventListener('click', close);
+    btn.addEventListener('click', () => {
+      if (isDesktop()) {
+        // Desktop: collapse/expand
+        const isCollapsed = sidebar.classList.toggle('app-sidebar--collapsed');
+        main?.classList.toggle('app-main--sidebar-collapsed', isCollapsed);
+        localStorage.setItem(COLLAPSED_KEY, isCollapsed);
+      } else {
+        // Mobile: open/close overlay
+        const isOpen = sidebar.classList.toggle('app-sidebar--mobile-open');
+        overlay?.classList.toggle('mobile-menu-overlay--open', isOpen);
+      }
+    });
+
+    overlay?.addEventListener('click', closeMobile);
   })();
 </script>

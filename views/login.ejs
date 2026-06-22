@@ -8,112 +8,108 @@
     <link rel="stylesheet" href="/assets/basecoat.min.css" />
     <link rel="stylesheet" href="/assets/theme-unand.css" />
   </head>
-  <body>
-    <div class="login-page">
-      <div class="login-card">
+  <body class="login-v3-body">
 
-        <div class="login-card-logo">
-          <img src="/assets/images/logo-unand.png" alt="Logo Universitas Andalas" width="62" height="76" />
-        </div>
+    <div class="login-v3-card">
 
-        <h1 class="login-card-title">
-          Sistem Pengajuan<br />
-          Pengunduran Diri Mahasiswa
-        </h1>
-        <p class="login-card-university">Universitas Andalas</p>
-
-        <div class="login-card-divider"></div>
-
-        <form action="/login" method="POST" class="login-form" novalidate>
-
-          <% if (error) { %>
-          <div class="form-alert" role="alert">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; margin-top:2px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            <span><%= error %></span>
-          </div>
-          <% } %>
-
-          <div class="login-field">
-            <label class="login-field-label" for="username">Username</label>
-            <div class="login-input-wrap">
-              <input
-                class="login-input"
-                type="text"
-                name="username"
-                id="username"
-                placeholder="Masukkan username"
-                required
-                autocomplete="username"
-                autofocus
-              />
-            </div>
-          </div>
-
-          <div class="login-field">
-            <label class="login-field-label" for="password">Password</label>
-            <div class="login-input-wrap">
-              <input
-                class="login-input login-input--password"
-                type="password"
-                name="password"
-                id="password"
-                placeholder="Masukkan password"
-                required
-                autocomplete="current-password"
-              />
-              <button type="button" class="login-input-toggle" id="togglePassword" aria-label="Tampilkan password" aria-pressed="false">
-                <svg class="login-eye-icon login-eye-icon--show" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                <svg class="login-eye-icon login-eye-icon--hide" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a21.62 21.62 0 0 1 5.06-6.06M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a21.6 21.6 0 0 1-3.22 4.66M14.12 14.12a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
-              </button>
-            </div>
-          </div>
-
-          <button type="submit" class="login-submit-btn">MASUK</button>
-        </form>
-
-        <div class="login-card-divider"></div>
-
-        <p class="login-card-roles-label">Login sebagai</p>
-        <div class="login-card-roles">
-          <div class="login-role-mini">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            <span class="login-role-mini-label">Mahasiswa</span>
-          </div>
-          <div class="login-role-mini">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
-            <span class="login-role-mini-label">Kaprodi</span>
-          </div>
-          <div class="login-role-mini">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-            <span class="login-role-mini-label">Wakil Dekan 1</span>
-          </div>
-          <div class="login-role-mini">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            <span class="login-role-mini-label">Admin</span>
-          </div>
-        </div>
-
+      <%# Badge %>
+      <div class="login-v3-badge">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+        Sistem Informasi Akademik
       </div>
 
-      <p class="login-card-footer">&copy; <%= new Date().getFullYear() %> Universitas Andalas</p>
+      <%# Header %>
+      <div class="login-v3-header">
+        <h1 class="login-v3-title">Selamat Datang</h1>
+        <p class="login-v3-subtitle">Masuk untuk melanjutkan ke sistem</p>
+      </div>
+
+      <%# Alert error %>
+      <% if (error) { %>
+      <div class="login-v3-alert" role="alert">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span><%= error %></span>
+      </div>
+      <% } %>
+
+      <%# Divider %>
+      <div class="login-v3-divider">Masuk dengan akun Anda</div>
+
+      <%# Form %>
+      <form action="/login" method="POST" class="login-v3-form" novalidate>
+
+        <div class="login-v3-field">
+          <label class="login-v3-label" for="username">Username</label>
+          <div class="login-v3-input-wrap">
+            <svg class="login-v3-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <input class="login-v3-input" type="text" name="username" id="username"
+              placeholder="Masukkan username" required autocomplete="username" autofocus />
+          </div>
+        </div>
+
+        <div class="login-v3-field">
+          <label class="login-v3-label" for="password">Password</label>
+          <div class="login-v3-input-wrap">
+            <svg class="login-v3-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <input class="login-v3-input login-v3-input--pw" type="password" name="password" id="password"
+              placeholder="Masukkan password" required autocomplete="current-password" />
+            <button type="button" class="login-v3-eye" id="togglePassword" aria-label="Tampilkan password">
+              <svg class="eye-show" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg class="eye-hide" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a21.62 21.62 0 0 1 5.06-6.06M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a21.6 21.6 0 0 1-3.22 4.66M14.12 14.12a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" class="login-v3-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+          Masuk
+        </button>
+
+      </form>
+
+      <%# Roles %>
+      <div class="login-v3-roles">
+        <p class="login-v3-roles-label">Tersedia Untuk</p>
+        <div class="login-v3-roles-grid">
+          <div class="login-v3-role">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span>Mahasiswa</span>
+          </div>
+          <div class="login-v3-role">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+            <span>Kaprodi</span>
+          </div>
+          <div class="login-v3-role">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+            <span>Wakil Dekan I</span>
+          </div>
+          <div class="login-v3-role">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>Admin</span>
+          </div>
+        </div>
+      </div>
+
+      <%# Footer security badge %>
+      <div class="login-v3-security">
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Sistem aman dan terverifikasi
+      </div>
+
     </div>
 
     <script>
       (() => {
-        const toggleBtn = document.getElementById('togglePassword');
-        const passwordInput = document.getElementById('password');
-        if (!toggleBtn || !passwordInput) return;
-
-        const showIcon = toggleBtn.querySelector('.login-eye-icon--show');
-        const hideIcon = toggleBtn.querySelector('.login-eye-icon--hide');
-
-        toggleBtn.addEventListener('click', () => {
-          const isPassword = passwordInput.type === 'password';
-          passwordInput.type = isPassword ? 'text' : 'password';
-          toggleBtn.setAttribute('aria-pressed', String(isPassword));
-          toggleBtn.setAttribute('aria-label', isPassword ? 'Sembunyikan password' : 'Tampilkan password');
-          showIcon.style.display = isPassword ? 'none' : '';
-          hideIcon.style.display = isPassword ? '' : 'none';
+        const btn = document.getElementById('togglePassword');
+        const input = document.getElementById('password');
+        if (!btn || !input) return;
+        const show = btn.querySelector('.eye-show');
+        const hide = btn.querySelector('.eye-hide');
+        btn.addEventListener('click', () => {
+          const isPass = input.type === 'password';
+          input.type = isPass ? 'text' : 'password';
+          show.style.display = isPass ? 'none' : '';
+          hide.style.display = isPass ? '' : 'none';
         });
       })();
     </script>
