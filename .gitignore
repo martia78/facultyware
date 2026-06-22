@@ -61,3 +61,5 @@ uploads/
 
 # next.js build output
 .next
+
+public/sk_docs/*.pdf

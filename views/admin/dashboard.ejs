@@ -103,9 +103,13 @@
                               <%= req.status %>
                             </span>
                           </td>
-                          <td>
-                            <a href="/admin/request/<%= req.id %>" style="color: #0056b3; font-weight: bold; text-decoration: none;">Cek Detail &rarr;</a>
-                          </td>
+                        <td>
+                          <% if (req.status === 'Approved') { %>
+                            <a href="/sk_docs/<%= req.no_surat %>.pdf" target="_blank" style="color: #28a745; font-weight: bold; text-decoration: none;">📄 Unduh SK</a>
+                          <% } else { %>
+                            <span style="color: #6c757d; font-size: 0.85rem;">Menunggu SK...</span>
+                          <% } %>
+                        </td>
                         </tr>
                       <% }) %>
                     <% } %>
