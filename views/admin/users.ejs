@@ -12,6 +12,13 @@
       <main class="app-content">
         <div class="content-narrow">
 
+          <% if (flash && flash.type === 'success') { %>
+          <div class="alert alert--success" style="margin-bottom:1rem;"><%= flash.message %></div>
+          <% } %>
+          <% if (flash && flash.type === 'error') { %>
+          <div class="alert alert--danger" style="margin-bottom:1rem;"><%= flash.message %></div>
+          <% } %>
+
           <div class="card" style="margin-bottom: 2rem; border-top: 4px solid #0056b3;">
             <header>
               <h2 style="color: #0056b3;">Tambah Pengguna Baru</h2>
@@ -71,11 +78,24 @@
                         <td><span style="background:#e9ecef; padding:4px 8px; border-radius:4px; font-size:0.85rem; font-weight:bold;"><%= u.role || 'No Role' %></span></td>
                         <td>
                           <% if (u.id !== 1) { %>
-                            <form action="/admin/users/delete/<%= u.id %>" method="POST" onsubmit="return confirm('Yakin ingin menghapus pengguna ini?');">
-                              <button type="submit" style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Hapus</button>
-                            </form>
+                            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                              <%# Tombol Reset Password — modal kecil inline %>
+                              <button onclick="showResetModal(this)"
+                                      data-id="<%= u.id %>"
+                                      data-name="<%= u.name %>"
+                                      style="background:#fd7e14; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer; font-size:0.8rem;">
+                                Reset Password
+                              </button>
+                              <form action="/admin/users/delete/<%= u.id %>" method="POST"
+                                    onsubmit="return confirm('Yakin ingin menghapus pengguna ini?');">
+                                <button type="submit"
+                                        style="background:#dc3545; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer; font-size:0.8rem;">
+                                  Hapus
+                                </button>
+                              </form>
+                            </div>
                           <% } else { %>
-                            <span style="color: #666; font-size: 0.85rem;">Master Admin</span>
+                            <span style="color:#666; font-size:0.85rem;">Master Admin</span>
                           <% } %>
                         </td>
                       </tr>
@@ -89,6 +109,65 @@
         </div>
       </main>
     </div>
+
+    <%# Modal Reset Password %>
+    <div id="reset-modal"
+         style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center;">
+      <div style="background:white; border-radius:8px; padding:1.5rem; width:360px; max-width:90vw; box-shadow:0 10px 40px rgba(0,0,0,0.2);">
+        <h3 style="margin:0 0 0.25rem; font-size:1rem;">Reset Password</h3>
+        <p id="reset-modal-name" style="margin:0 0 1rem; font-size:0.875rem; color:#666;"></p>
+
+        <form id="reset-form" method="POST">
+          <div style="margin-bottom:0.75rem;">
+            <label style="font-size:0.8125rem; font-weight:600; display:block; margin-bottom:4px;">Password Baru</label>
+            <input type="password" name="new_password" id="reset-new-password" required minlength="8"
+                   style="width:100%; padding:8px 10px; border:1px solid #ccc; border-radius:6px; box-sizing:border-box;">
+          </div>
+          <div style="margin-bottom:1rem;">
+            <label style="font-size:0.8125rem; font-weight:600; display:block; margin-bottom:4px;">Konfirmasi Password Baru</label>
+            <input type="password" id="reset-confirm-password" required
+                   style="width:100%; padding:8px 10px; border:1px solid #ccc; border-radius:6px; box-sizing:border-box;">
+            <p style="font-size:0.75rem; color:#666; margin:4px 0 0;">Minimal 8 karakter.</p>
+          </div>
+          <div style="display:flex; gap:8px; justify-content:flex-end;">
+            <button type="button" onclick="closeResetModal()"
+                    style="padding:8px 16px; border:1px solid #ccc; background:white; border-radius:6px; cursor:pointer;">
+              Batal
+            </button>
+            <button type="submit" onclick="return submitReset()"
+                    style="padding:8px 16px; background:#fd7e14; color:white; border:none; border-radius:6px; font-weight:600; cursor:pointer;">
+              Reset Password
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
     <script src="/assets/js/basecoat.js"></script>
+    <script>
+      function showResetModal(btn) {
+        var userId   = btn.getAttribute('data-id');
+        var userName = btn.getAttribute('data-name') || '';
+        document.getElementById('reset-modal-name').textContent = 'User: ' + userName;
+        document.getElementById('reset-form').action = '/admin/users/reset-password/' + userId;
+        document.getElementById('reset-new-password').value = '';
+        document.getElementById('reset-confirm-password').value = '';
+        document.getElementById('reset-modal').style.display = 'flex';
+      }
+      function closeResetModal() {
+        document.getElementById('reset-modal').style.display = 'none';
+      }
+      function submitReset() {
+        var np = document.getElementById('reset-new-password').value;
+        var cp = document.getElementById('reset-confirm-password').value;
+        if (np.length < 8) { alert('Password minimal 8 karakter.'); return false; }
+        if (np !== cp)      { alert('Konfirmasi password tidak cocok.'); return false; }
+        return true;
+      }
+      // Tutup modal jika klik di luar
+      document.getElementById('reset-modal').addEventListener('click', function(e) {
+        if (e.target === this) closeResetModal();
+      });
+    </script>
   </body>
 </html>

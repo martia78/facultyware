@@ -7,7 +7,7 @@ const { apiLogin, BASE_URL } = require('./helpers');
 // ── TC-API-01: Login API berhasil ─────────────────────────────────────────
 test('TC-API-01: POST /api/auth/login mengembalikan JWT token', async ({ request }) => {
   const res = await request.post(`${BASE_URL}/api/auth/login`, {
-    data: { username: '2211521000', password: 'password123' },
+    data: { username: '2211521000', password: 'Mhs@2211521000' },
   });
   expect(res.status()).toBe(200);
   const body = await res.json();
@@ -35,7 +35,7 @@ test('TC-API-03: GET /api/submissions tanpa token mengembalikan 401', async ({ r
 
 // ── TC-API-04: Akses API dengan token valid berhasil ─────────────────────
 test('TC-API-04: GET /api/submissions dengan token valid mengembalikan data', async ({ request }) => {
-  const token = await apiLogin(request, '2211521000', 'password123');
+  const token = await apiLogin(request, '2211521000', 'Mhs@2211521000');
   if (!token) return; // skip jika login gagal
 
   const res = await request.get(`${BASE_URL}/api/submissions`, {
@@ -50,7 +50,7 @@ test('TC-API-04: GET /api/submissions dengan token valid mengembalikan data', as
 
 // ── TC-API-05: Response pagination memiliki struktur benar ───────────────
 test('TC-API-05: Pagination API memiliki field total, page, limit, total_pages', async ({ request }) => {
-  const token = await apiLogin(request, '2211521000', 'password123');
+  const token = await apiLogin(request, '2211521000', 'Mhs@2211521000');
   if (!token) return;
 
   const res = await request.get(`${BASE_URL}/api/submissions?page=1&limit=5`, {
@@ -66,7 +66,7 @@ test('TC-API-05: Pagination API memiliki field total, page, limit, total_pages',
 
 // ── TC-API-06: Searching di API berfungsi ────────────────────────────────
 test('TC-API-06: GET /api/submissions?search= memfilter hasil dengan benar', async ({ request }) => {
-  const token = await apiLogin(request, 'kaprodi123', 'password123');
+  const token = await apiLogin(request, 'kaprodi.fti', 'Kaprodi@2026');
   if (!token) return;
 
   const res = await request.get(`${BASE_URL}/api/submissions?search=RES-`, {
@@ -79,7 +79,7 @@ test('TC-API-06: GET /api/submissions?search= memfilter hasil dengan benar', asy
 
 // ── TC-API-07: Kaprodi tidak bisa akses submission milik mahasiswa lain ──
 test('TC-API-07: ACL API kaprodi hanya melihat pengajuan yang relevan', async ({ request }) => {
-  const token = await apiLogin(request, 'kaprodi123', 'password123');
+  const token = await apiLogin(request, 'kaprodi.fti', 'Kaprodi@2026');
   if (!token) return;
 
   const res = await request.get(`${BASE_URL}/api/submissions`, {
@@ -90,7 +90,7 @@ test('TC-API-07: ACL API kaprodi hanya melihat pengajuan yang relevan', async ({
 
 // ── TC-API-08: GET /api/auth/me mengembalikan info user ───────────────────
 test('TC-API-08: GET /api/auth/me mengembalikan data user yang login', async ({ request }) => {
-  const token = await apiLogin(request, '2211521000', 'password123');
+  const token = await apiLogin(request, '2211521000', 'Mhs@2211521000');
   if (!token) return;
 
   const res = await request.get(`${BASE_URL}/api/auth/me`, {
@@ -99,9 +99,9 @@ test('TC-API-08: GET /api/auth/me mengembalikan data user yang login', async ({ 
   expect(res.status()).toBe(200);
   const body = await res.json();
   expect(body.success).toBe(true);
-  expect(body.data).toHaveProperty('id');
-  expect(body.data).toHaveProperty('username');
-  expect(body.data).toHaveProperty('role');
+  expect(body.data.user).toHaveProperty("id");
+  expect(body.data.user).toHaveProperty("username");
+  expect(body.data.user).toHaveProperty("role");
 });
 
 // ── TC-API-09: Token salah mengembalikan 401 ─────────────────────────────
@@ -114,7 +114,7 @@ test('TC-API-09: Request dengan token tidak valid mengembalikan 401', async ({ r
 
 // ── TC-API-10: Validasi API - POST submission tanpa data ─────────────────
 test('TC-API-10: POST /api/submissions tanpa data mengembalikan 422', async ({ request }) => {
-  const token = await apiLogin(request, '2211521000', 'password123');
+  const token = await apiLogin(request, '2211521000', 'Mhs@2211521000');
   if (!token) return;
 
   const res = await request.post(`${BASE_URL}/api/submissions`, {

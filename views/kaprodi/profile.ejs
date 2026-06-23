@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <%- include('../partials/head', { title: pageTitle }) %>
+  </head>
+  <body class="page-shell">
+    <%- include('../partials/sidebar') %>
+    <div class="app-main">
+      <%- include('../partials/topbar') %>
+      <main class="app-content">
+        <div class="content-narrow">
+
+          <% if (flash && flash.type !== 'password_success' && flash.type !== 'password_error') { %>
+          <div class="alert alert--<%= flash.type === 'success' ? 'success' : 'danger' %>" style="margin-bottom:1rem;">
+            <%= flash.message %>
+          </div>
+          <% } %>
+
+          <div class="dash-card">
+            <div class="dash-card-body" style="padding-top:1.5rem; display:flex; align-items:center; gap:1.25rem; flex-wrap:wrap;">
+              <div class="profile-avatar-lg">
+                <%= user && user.name ? user.name.charAt(0).toUpperCase() : 'K' %>
+              </div>
+              <div>
+                <p style="margin:0; font-size:1.125rem; font-weight:800;"><%= user ? user.name : '—' %></p>
+                <p style="margin:0.125rem 0 0; font-size:0.875rem; color:var(--muted-foreground);">
+                  Ketua Program Studi
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <%- include('../partials/change_password_card', { flash, changePasswordAction: '/kaprodi/profile/change-password' }) %>
+
+        </div>
+      </main>
+    </div>
+    <div id="toaster" class="toaster"></div>
+    <script src="/assets/js/basecoat.js"></script>
+  </body>
+</html>

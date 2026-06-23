@@ -11,6 +11,8 @@ const isKaprodi = [isAuthenticated, authorize(['kaprodi'])];
 router.get('/', (req, res) => res.redirect('/kaprodi/dashboard'));
 
 router.get('/dashboard', ...isKaprodi, kaprodiController.dashboard);
+router.get('/profile',   ...isKaprodi, kaprodiController.profile);
+router.post('/profile/change-password', ...isKaprodi, kaprodiController.changePassword);
 
 router.get('/submissions',                ...isKaprodi, kaprodiController.index);
 router.get('/submissions/:id',            ...isKaprodi, kaprodiController.show);

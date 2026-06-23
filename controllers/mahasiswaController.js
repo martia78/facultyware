@@ -33,21 +33,22 @@ const dashboard = async (req, res, next) => {
     const student = await model.getStudentByUserId(req.session.userId);
     const { rows: submissions, total } = await model.getSubmissionsByStudentId(req.session.userId, { limit: 100 });
 
-    // "Pengajuan aktif" = pengajuan yang belum mencapai status final
-    // (Draft / Menunggu Verifikasi Kaprodi / Diproses WD I). Jika pengajuan
-    // terakhir sudah Disetujui/Ditolak, dashboard kembali menampilkan
-    // "Belum Ada Pengajuan Aktif" meskipun riwayat tetap ada di tabel bawah.
-    const active = submissions.find(s => model.ACTIVE_STATUSES.includes(s.status)) || null;
+    // "latest" = pengajuan yang paling relevan ditampilkan di kartu status:
+    // - Jika ada pengajuan aktif (Draft/Menunggu/Diproses) → tampilkan itu
+    // - Jika tidak ada aktif tapi ada yang sudah final → tampilkan yang terakhir
+    //   (supaya tombol Unduh SK dan info status akhir tetap terlihat)
+    const active  = submissions.find(s => model.ACTIVE_STATUSES.includes(s.status)) || null;
+    const latest  = active || submissions[0] || null;
     const recent3 = submissions.slice(0, 3);
-    const history = active ? await model.getApprovalHistory(active.id) : [];
-    const timeline = model.buildTimeline(active, history);
+    const history = latest ? await model.getApprovalHistory(latest.id) : [];
+    const timeline = model.buildTimeline(latest, history);
 
     res.render('mahasiswa/dashboard', {
       title: 'Dashboard Mahasiswa',
       pageTitle: 'Dashboard Mahasiswa',
       pageSubtitle: null,
       currentPath: '/mahasiswa/dashboard',
-      student, latest: active, recent3, timeline,
+      student, latest, isActive: !!active, recent3, timeline,
       totalSubmissions: submissions.length,
       STATUS_LABEL: model.STATUS_LABEL,
       STATUS_BADGE: model.STATUS_BADGE,
@@ -188,4 +189,36 @@ const exportPDF = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-module.exports = { dashboard, exportPDF, profile };
+
+// POST /mahasiswa/profile/change-password
+const changePassword = async (req, res, next) => {
+  try {
+    const { current_password, new_password, confirm_password } = req.body;
+    const userId = req.session.userId;
+
+    if (new_password.length < 8) {
+      req.session.flash = { type: 'password_error', message: 'Password baru minimal 8 karakter.' };
+      return res.redirect('/mahasiswa/profile');
+    }
+    if (new_password !== confirm_password) {
+      req.session.flash = { type: 'password_error', message: 'Konfirmasi password tidak cocok.' };
+      return res.redirect('/mahasiswa/profile');
+    }
+
+    const db = require('../lib/db');
+    const bcrypt = require('bcryptjs');
+    const [[user]] = await db.query('SELECT password FROM users WHERE id = ?', [userId]);
+    if (!user || !(await bcrypt.compare(current_password, user.password))) {
+      req.session.flash = { type: 'password_error', message: 'Password saat ini tidak sesuai.' };
+      return res.redirect('/mahasiswa/profile');
+    }
+
+    const hashed = await bcrypt.hash(new_password, 12);
+    await db.query('UPDATE users SET password = ?, updated_at = NOW() WHERE id = ?', [hashed, userId]);
+
+    req.session.flash = { type: 'password_success', message: 'Password berhasil diperbarui.' };
+    res.redirect('/mahasiswa/profile');
+  } catch (err) { next(err); }
+};
+
+module.exports = { dashboard, exportPDF, profile, changePassword };

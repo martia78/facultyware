@@ -62,6 +62,14 @@ const index = async (req, res, next) => {
 // GET /mahasiswa/submissions/create
 const createForm = async (req, res, next) => {
   try {
+    // Blokir jika sudah ada pengajuan yang disetujui final — tidak perlu ajukan lagi
+    const { rows: allSubmissions } = await model.getSubmissionsByStudentId(req.session.userId, { limit: 5 });
+    const approved = allSubmissions.find(s => s.status === model.STATUS.DISETUJUI_FINAL);
+    if (approved) {
+      flashError(req, 'Pengajuan pengunduran diri Anda telah disetujui secara final. Tidak dapat membuat pengajuan baru.');
+      return res.redirect('/mahasiswa/dashboard');
+    }
+
     // Ketentuan Pengajuan Ganda: cek dulu apakah masih ada pengajuan aktif.
     const active = await model.getActiveSubmission(req.session.userId);
     if (active) {

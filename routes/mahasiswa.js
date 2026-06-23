@@ -14,6 +14,7 @@ router.get('/', (req, res) => res.redirect('/mahasiswa/dashboard'));
 
 router.get('/dashboard', ...isMahasiswa, mahasiswaController.dashboard);
 router.get('/profile',   ...isMahasiswa, mahasiswaController.profile);
+router.post('/profile/change-password', ...isMahasiswa, mahasiswaController.changePassword);
 
 router.get('/submissions',          ...isMahasiswa, submissionController.index);
 router.get('/submissions/create',   ...isMahasiswa, submissionController.createForm);

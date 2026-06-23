@@ -55,19 +55,19 @@ const login = async (req, res, next) => {
     const user    = rows[0];
 
     // 2. THE X-RAY LOGS: Let's see exactly how long the strings are
-    console.log("--- BCRYPT DIAGNOSTIC ---");
-    console.log("Raw Input Password Length:", cleanPassword.length, "(Should be 11)");
-    console.log("DB Hash Length:", user.password.length, "(MUST be exactly 60)");
-    console.log("DB Hash Value:", user.password);
+    // console.log("--- BCRYPT DIAGNOSTIC ---");
+    // console.log("Raw Input Password Length:", cleanPassword.length, "(Should be 11)");
+    // console.log("DB Hash Length:", user.password.length, "(MUST be exactly 60)");
+    // console.log("DB Hash Value:", user.password);
 
 // 3. COMPARE USING THE CLEANED PASSWORD
     const isMatch = await bcrypt.compare(cleanPassword, user.password);
-    console.log("🔑 BCRYPT MATCH RESULT:", isMatch);
-    console.log("-------------------------");
+    // console.log("🔑 BCRYPT MATCH RESULT:", isMatch);
+    // console.log("-------------------------");
 
     // ADD THESE TWO LINES
-    console.log("✅ USER FOUND:", user.username, "| ROLE:", user.role);
-    console.log("🔑 BCRYPT MATCH RESULT:", isMatch);
+    // console.log("✅ USER FOUND:", user.username, "| ROLE:", user.role);
+    // console.log("🔑 BCRYPT MATCH RESULT:", isMatch);
 
     if (!isMatch) {
       return res.render('login', {
@@ -101,10 +101,8 @@ const dashboard = (req, res, next) => {
         return res.redirect('/kaprodi');
     case 'wd1':       
         return res.redirect('/wd1');
-    case 'wd1':     
-        return res.redirect('/wd1'); // Failsafe: Just in case the DB still says 'wd1'
     default:          
-        return res.redirect('/'); // Failsafe: Send unknown users to the Master Portal
+        return res.redirect('/login'); // Failsafe: Send unknown users to the Master Portal
   }
 };
 

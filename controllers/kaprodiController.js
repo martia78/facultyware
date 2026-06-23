@@ -132,4 +132,44 @@ const viewDocument = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-module.exports = { dashboard, index, show, approve, reject, viewDocument };
+
+// ── Profile & Change Password ─────────────────────────────────────────────────
+const profile = async (req, res, next) => {
+  try {
+    res.render('kaprodi/profile', {
+      pageTitle: 'Profil Saya',
+      currentPath: '/kaprodi/profile',
+      user: req.session,
+      flash: req.session.flash || null,
+    });
+    delete req.session.flash;
+  } catch (err) { next(err); }
+};
+
+const changePassword = async (req, res, next) => {
+  try {
+    const { current_password, new_password, confirm_password } = req.body;
+    const userId = req.session.userId;
+    const db     = require('../lib/db');
+    const bcrypt = require('bcryptjs');
+
+    if (new_password.length < 8) {
+      req.session.flash = { type: 'password_error', message: 'Password baru minimal 8 karakter.' };
+      return res.redirect('/kaprodi/profile');
+    }
+    if (new_password !== confirm_password) {
+      req.session.flash = { type: 'password_error', message: 'Konfirmasi password tidak cocok.' };
+      return res.redirect('/kaprodi/profile');
+    }
+    const [[user]] = await db.query('SELECT password FROM users WHERE id = ?', [userId]);
+    if (!user || !(await bcrypt.compare(current_password, user.password))) {
+      req.session.flash = { type: 'password_error', message: 'Password saat ini tidak sesuai.' };
+      return res.redirect('/kaprodi/profile');
+    }
+    const hashed = await bcrypt.hash(new_password, 12);
+    await db.query('UPDATE users SET password = ?, updated_at = NOW() WHERE id = ?', [hashed, userId]);
+    req.session.flash = { type: 'password_success', message: 'Password berhasil diperbarui.' };
+    res.redirect('/kaprodi/profile');
+  } catch (err) { next(err); }
+};
+module.exports = { dashboard, index, show, approve, reject, viewDocument, profile, changePassword };

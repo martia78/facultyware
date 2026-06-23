@@ -1,121 +1,215 @@
-// controllers/adminController.js
-
-// 1. THE MISSING LINK: We must import the database connection and bcrypt!
-const pool = require('../lib/db');
+const pool   = require('../lib/db');
 const bcrypt = require('bcryptjs');
+const model  = require('../lib/submissionModel');
 
-// 2. Dashboard with Search Logic
-exports.getDashboard = async (req, res) => {
-    try {
-        const searchQuery = req.query.search || '';
-        let queryStr = `
-            SELECT sr.id, sr.request_nunmber AS no_surat, sr.status, sr.requested_at, s.name, s.regno
-            FROM student_requests sr
-            JOIN students s ON sr.requested_by = s.id
-        `;
-        let queryParams = [];
+// ── Helper: error handling terpusat ──────────────────────────────────────────
+function handleError(res, next, err, message) {
+  console.error(message, err);
+  next(err);
+}
 
-        if (searchQuery) {
-            queryStr += ` WHERE s.name LIKE ? OR s.regno LIKE ? OR sr.request_nunmber LIKE ?`;
-            const likeTerm = `%${searchQuery}%`;
-            queryParams.push(likeTerm, likeTerm, likeTerm);
-        }
-
-        queryStr += ` ORDER BY sr.requested_at DESC`;
-
-        const [requests] = await pool.query(queryStr, queryParams);
-        
-        res.render('admin/dashboard', {
-            pageTitle: 'Radar Lacak Admin',
-            role: req.session.role,
-            user: req.session,
-            requests: requests,
-            searchQuery: searchQuery 
-        });
-    } catch (error) {
-        console.error("Admin Dashboard Error:", error);
-        res.status(500).send("Server Error");
+// 1. Dashboard
+exports.getDashboard = async (req, res, next) => {
+  try {
+    const searchQuery = req.query.search || '';
+    let queryStr = `
+      SELECT sr.id, sr.request_number AS no_surat, sr.status, sr.requested_at,
+             s.name, s.regno
+      FROM student_requests sr
+      LEFT JOIN students s ON sr.requested_by = s.id
+    `;
+    const queryParams = [];
+    if (searchQuery) {
+      queryStr += ` WHERE s.name LIKE ? OR s.regno LIKE ? OR sr.request_number LIKE ?`;
+      const likeTerm = `%${searchQuery}%`;
+      queryParams.push(likeTerm, likeTerm, likeTerm);
     }
+    queryStr += ` ORDER BY sr.requested_at DESC`;
+
+    const [requests] = await pool.query(queryStr, queryParams);
+    res.render('admin/dashboard', {
+      pageTitle: 'Radar Lacak Admin',
+      role: req.session.role,
+      user: req.session,
+      requests,
+      searchQuery,
+    });
+  } catch (err) { handleError(res, next, err, 'Admin Dashboard Error:'); }
 };
 
-// 3. User Management (Read)
-exports.getUsers = async (req, res) => {
-    try {
-        const [users] = await pool.query(`
-            SELECT u.id, u.username, u.name, r.name AS role 
-            FROM users u
-            LEFT JOIN user_has_roles uhr ON u.id = uhr.user_id
-            LEFT JOIN roles r ON uhr.role_id = r.id
-        `);
-        res.render('admin/users', { 
-            pageTitle: 'Manajemen Pengguna', 
-            role: req.session.role,
-            user: req.session,
-            users: users 
-        });
-    } catch (error) {
-        console.error("Error loading users:", error);
-        res.status(500).send("Gagal memuat daftar pengguna.");
-    }
+// 2. User Management (Read)
+// Auto-sync DIHAPUS dari sini — sinkronisasi student dilakukan di addUser saja.
+exports.getUsers = async (req, res, next) => {
+  try {
+    const [users] = await pool.query(`
+      SELECT u.id, u.username, u.name, r.name AS role
+      FROM users u
+      LEFT JOIN user_has_roles uhr ON u.id = uhr.user_id
+      LEFT JOIN roles r ON uhr.role_id = r.id
+      ORDER BY u.created_at DESC
+    `);
+    const [roles] = await pool.query(`SELECT id, name FROM roles ORDER BY name`);
+    const flash = req.session.flash || null;
+    delete req.session.flash;
+    res.render('admin/users', {
+      pageTitle: 'Manajemen Pengguna',
+      role: req.session.role,
+      user: req.session,
+      users,
+      roles,
+      flash,
+    });
+  } catch (err) { handleError(res, next, err, 'Error loading users:'); }
 };
 
-// 4. User Management (Create)
+// 3. User Management (Create)
 exports.addUser = async (req, res, next) => {
-    try {
-        const { username, name, email, password, role } = req.body;
+  const conn = await pool.getConnection();
+  try {
+    await conn.beginTransaction();
 
-        // 1. Hash the password for security
-        const hashedPassword = await bcrypt.hash(password, 10);
+    const { username, name, password, role_id } = req.body;
+    const hashedPassword = await bcrypt.hash(password.trim(), 12);
 
-        // 2. Insert into the main users table
-        const [userResult] = await pool.query(
-            "INSERT INTO users (username, name, email, password, created_at, updated_at) VALUES (?, ?, ?, ?, NOW(), NOW())",
-            [username.trim(), name.trim(), email ? email.trim() : null, hashedPassword]
-        );
-        const userId = userResult.insertId;
+    const [result] = await conn.query(
+      'INSERT INTO users (username, name, password, created_at, updated_at) VALUES (?, ?, ?, NOW(), NOW())',
+      [username.trim(), name.trim(), hashedPassword]
+    );
+    const newUserId = result.insertId;
 
-        // 3. Attach the Role to the user
-        let roleId = role;
-        // If the form sent a text name (like 'Mahasiswa') instead of an ID number, look up the ID first
-        if (isNaN(role)) {
-            const [roleRows] = await pool.query("SELECT id FROM roles WHERE name = ?", [role]);
-            if (roleRows.length > 0) roleId = roleRows[0].id;
-        }
-        
-        if (roleId) {
-            await pool.query("INSERT INTO user_has_roles (user_id, role_id) VALUES (?, ?)", [userId, roleId]);
-        }
-
-        // 4. THE GHOST BUG FIX: If it's a student, automatically build their academic profile!
-        const [roleCheck] = await pool.query("SELECT name FROM roles WHERE id = ?", [roleId]);
-        const roleName = roleCheck.length > 0 ? roleCheck[0].name.toLowerCase() : String(role).toLowerCase();
-
-        if (roleName === 'mahasiswa' || roleName === 'student') {
-            await pool.query(
-                "INSERT INTO students (user_id, regno, name, department_id, created_at, updated_at) VALUES (?, ?, ?, 1, NOW(), NOW())",
-                [userId, username.trim(), name.trim()] // Using username as their NIM/Regno
-            );
-        }
-
-        // 5. Success! Bounce back to the user list
-        res.redirect('/admin/users');
-    } catch (err) {
-        console.error("Error adding user:", err);
-        res.status(500).send("Terjadi kesalahan saat menambah pengguna.");
+    // Resolve role_id (bisa berupa angka atau nama role)
+    let resolvedRoleId = parseInt(role_id, 10);
+    if (isNaN(resolvedRoleId)) {
+      const [[r]] = await conn.query('SELECT id FROM roles WHERE name = ?', [role_id]);
+      if (!r) throw new Error(`Role '${role_id}' tidak ditemukan.`);
+      resolvedRoleId = r.id;
     }
+    await conn.query(
+      'INSERT INTO user_has_roles (user_id, role_id) VALUES (?, ?)',
+      [newUserId, resolvedRoleId]
+    );
+
+    // Jika mahasiswa, insert ke tabel students dalam transaksi yang sama
+    const [[roleRow]] = await conn.query('SELECT name FROM roles WHERE id = ?', [resolvedRoleId]);
+    if (roleRow && roleRow.name === 'mahasiswa') {
+      const [[dept]] = await conn.query(
+        "SELECT id FROM organization_units WHERE type = 'department' LIMIT 1"
+      );
+      const departmentId = dept ? dept.id : 2;
+      await conn.query(
+        'INSERT INTO students (id, name, regno, department_id, created_at, updated_at) VALUES (?, ?, ?, ?, NOW(), NOW())',
+        [newUserId, name.trim(), username.trim(), departmentId]
+      );
+    }
+
+    await conn.commit();
+    res.redirect('/admin/users');
+  } catch (err) {
+    await conn.rollback();
+    handleError(res, next, err, 'Error adding user:');
+  } finally {
+    conn.release();
+  }
 };
 
-// 5. User Management (Delete)
-exports.deleteUser = async (req, res) => {
-    try {
-        const userId = req.params.id;
-        
-        await pool.query("DELETE FROM user_has_roles WHERE user_id = ?", [userId]);
-        await pool.query("DELETE FROM users WHERE id = ?", [userId]);
-        
-        res.redirect('/admin/users');
-    } catch (error) {
-        console.error("Error deleting user:", error);
-        res.status(500).send("Gagal menghapus pengguna.");
+// 4. User Management (Delete)
+// Hapus semua data terkait user dalam satu transaksi untuk menghindari orphaned data.
+exports.deleteUser = async (req, res, next) => {
+  const conn = await pool.getConnection();
+  try {
+    await conn.beginTransaction();
+
+    const userId = req.params.id;
+
+    // Hapus detail resignation terlebih dahulu (child dari student_requests)
+    await conn.query(`
+      DELETE srr FROM student_request_resignation srr
+      JOIN student_requests sr ON sr.id = srr.student_requests_id
+      WHERE sr.requested_by = ?
+    `, [userId]);
+
+    // Hapus semua pengajuan milik mahasiswa ini
+    await conn.query(
+      'DELETE FROM student_requests WHERE requested_by = ?',
+      [userId]
+    );
+
+    // Hapus data student, role, lalu user utama
+    await conn.query('DELETE FROM students WHERE id = ?', [userId]);
+    await conn.query('DELETE FROM user_has_roles WHERE user_id = ?', [userId]);
+    await conn.query('DELETE FROM users WHERE id = ?', [userId]);
+
+    await conn.commit();
+    res.redirect('/admin/users');
+  } catch (err) {
+    await conn.rollback();
+    handleError(res, next, err, 'Error deleting user:');
+  } finally {
+    conn.release();
+  }
+};
+
+// 5. Data Mahasiswa
+exports.getStudents = async (req, res, next) => {
+  try {
+    const search = req.query.search || '';
+    const page   = Math.max(parseInt(req.query.page) || 1, 1);
+    const limit  = 10;
+    const offset = (page - 1) * limit;
+    const like   = `%${search}%`;
+
+    const [[{ total }]] = await pool.query(
+      `SELECT COUNT(*) AS total FROM students s
+       LEFT JOIN organization_units ou ON s.department_id = ou.id
+       WHERE s.name LIKE ? OR s.regno LIKE ?`,
+      [like, like]
+    );
+    const [students] = await pool.query(
+      `SELECT s.id, s.name, s.regno,
+              COALESCE(ou.name, '—') AS department_name,
+              (SELECT COUNT(*) FROM student_requests sr
+               WHERE sr.requested_by = s.id AND sr.request_type = 'resignation') AS total_requests
+       FROM students s
+       LEFT JOIN organization_units ou ON s.department_id = ou.id
+       WHERE s.name LIKE ? OR s.regno LIKE ?
+       ORDER BY s.name ASC
+       LIMIT ? OFFSET ?`,
+      [like, like, limit, offset]
+    );
+    res.render('admin/students', {
+      pageTitle: 'Data Mahasiswa',
+      user: req.session,
+      role: req.session.role,
+      students,
+      total,
+      totalPages: Math.max(1, Math.ceil(total / limit)),
+      currentPage: page,
+      search,
+    });
+  } catch (err) { handleError(res, next, err, 'Error loading students:'); }
+};
+
+// 6. Reset Password User (oleh admin)
+exports.resetPassword = async (req, res, next) => {
+  try {
+    const bcrypt   = require('bcryptjs');
+    const targetId = req.params.id;
+    const newPass  = req.body.new_password || '';
+
+    if (newPass.length < 8) {
+      req.session.flash = { type: 'error', message: 'Password baru minimal 8 karakter.' };
+      return res.redirect('/admin/users');
     }
+
+    const hashed = await bcrypt.hash(newPass, 12);
+    await pool.query(
+      'UPDATE users SET password = ?, updated_at = NOW() WHERE id = ?',
+      [hashed, targetId]
+    );
+
+    req.session.flash = { type: 'success', message: 'Password user berhasil direset.' };
+    res.redirect('/admin/users');
+  } catch (err) {
+    handleError(res, next, err, 'Error resetting password:');
+  }
 };

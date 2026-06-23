@@ -16,7 +16,7 @@ function deleteUploadedFile(file) {
 // Cakupan akses per role (sama dengan yang dipakai versi web — lihat
 // controllers/submissionController.js & kaprodiController.js)
 const KAPRODI_SCOPE = [model.STATUS.MENUNGGU_PRODI, model.STATUS.DISETUJUI_PRODI, model.STATUS.DITOLAK_PRODI];
-const DEKAN_SCOPE   = [model.STATUS.DISETUJUI_PRODI, model.STATUS.DISETUJUI_FINAL, model.STATUS.DITOLAK_FINAL];
+const WD1_SCOPE     = [model.STATUS.DISETUJUI_PRODI, model.STATUS.DISETUJUI_FINAL, model.STATUS.DITOLAK_FINAL];
 
 // Pastikan req.user (role tertentu) berhak melihat `submission` ini.
 // Return true/false — pemanggil yang menentukan respons 403/404.
@@ -25,7 +25,7 @@ function canView(user, submission) {
   switch (user.role) {
     case 'mahasiswa': return submission.requested_by === user.id;
     case 'kaprodi':   return KAPRODI_SCOPE.includes(submission.status);
-    case 'dekan':     return DEKAN_SCOPE.includes(submission.status);
+    case 'wd1':       return WD1_SCOPE.includes(submission.status);
     case 'admin':     return true;
     default:          return false;
   }
@@ -46,7 +46,7 @@ const index = async (req, res, next) => {
       case 'kaprodi':
         result = await model.getSubmissionsForKaprodi({ search, status, page: pageNum, limit });
         break;
-      case 'dekan':
+      case 'wd1':
         result = await model.getSubmissionsForDekan({ search, status, page: pageNum, limit });
         break;
       case 'admin':
@@ -180,7 +180,7 @@ const destroy = async (req, res, next) => {
 // Satu endpoint generik untuk SEMUA transisi status, sesuai peran token JWT:
 //   mahasiswa -> Draft(0) => Menunggu Prodi(1)            [submit]
 //   kaprodi   -> Menunggu Prodi(1) => Disetujui(2)/Ditolak(3)
-//   dekan     -> Disetujui Prodi(2) => Disetujui Final(4)/Ditolak Final(5)
+//   wd1       -> Disetujui Prodi(2) => Disetujui Final(4)/Ditolak Final(5)
 const updateStatus = async (req, res, next) => {
   try {
     const id = req.params.id;
@@ -216,7 +216,7 @@ const updateStatus = async (req, res, next) => {
         } else {
           return fail(res, 400, 'Status tujuan tidak valid untuk Kaprodi.');
         }
-      } else if (role === 'dekan') {
+      } else if (role === 'wd1') {
         if (submission.status !== S.DISETUJUI_PRODI) {
           return fail(res, 400, 'Pengajuan ini belum disetujui Kaprodi / sudah diproses lebih lanjut.');
         }

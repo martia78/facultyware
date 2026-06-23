@@ -43,18 +43,42 @@
           </section>
 
           <section class="stat-grid stat-grid--2">
-            <div class="dash-stat-card dash-stat-card--green">
+            <div class="dash-stat-card <%= latest && latest.status === STATUS.DISETUJUI_FINAL ? 'dash-stat-card--green' : (latest && (latest.status === 3 || latest.status === 5) ? 'dash-stat-card--red' : 'dash-stat-card--green') %>">
               <div>
                 <p class="dash-stat-label">Status Pengajuan</p>
-                <p class="dash-stat-value dash-stat-value--green">
+                <p class="dash-stat-value <%= latest && latest.status === STATUS.DISETUJUI_FINAL ? 'dash-stat-value--green' : (latest && (latest.status === 3 || latest.status === 5) ? 'dash-stat-value--red' : 'dash-stat-value--green') %>">
                   <%= latest ? (STATUS_HEADLINE[latest.status] || '—') : 'Belum Ada' %>
                 </p>
                 <% if (latest) { %>
-                <span class="dash-stat-pill"><%= STATUS_LABEL[latest.status] || '—' %></span>
+                <span class="badge <%= STATUS_BADGE[latest.status] || 'badge--gray' %>"><%= STATUS_LABEL[latest.status] || '—' %></span>
+                <% } %>
+                <% if (latest && latest.status === STATUS.DISETUJUI_FINAL) { %>
+                <div style="margin-top:0.75rem;">
+                  <a href="/mahasiswa/submissions/<%= latest.id %>/pdf"
+                     class="btn-primary"
+                     style="display:inline-flex;align-items:center;gap:6px;font-size:0.8125rem;padding:6px 14px;text-decoration:none;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Unduh SK (PDF)
+                  </a>
+                </div>
+                <% } %>
+                <% if (latest && (latest.status === 3 || latest.status === 5)) { %>
+                <div style="margin-top:0.75rem;">
+                  <a href="/mahasiswa/submissions/create"
+                     class="btn-primary"
+                     style="display:inline-flex;align-items:center;gap:6px;font-size:0.8125rem;padding:6px 14px;text-decoration:none;background:#6c757d;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16m8-8H4"/></svg>
+                    Ajukan Ulang
+                  </a>
+                </div>
                 <% } %>
               </div>
               <div class="dash-stat-icon-wrap dash-stat-icon-wrap--green">
+                <% if (latest && latest.status === STATUS.DISETUJUI_FINAL) { %>
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                <% } else { %>
                 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12l2 2 4-4"/></svg>
+                <% } %>
               </div>
             </div>
 
@@ -70,7 +94,9 @@
             </div>
           </section>
 
+          <%# Kartu bawah — kondisi berdasarkan status latest %>
           <% if (!latest) { %>
+          <%# Belum pernah mengajukan — tampilkan CTA buat pengajuan %>
           <div class="dash-card">
             <div class="dash-card-body" style="padding-top:1.25rem;">
               <div class="empty-state">
@@ -85,7 +111,75 @@
               </div>
             </div>
           </div>
+
+          <% } else if (latest.status === STATUS.DISETUJUI_FINAL) { %>
+          <%# Disetujui Final — tampilkan info SK, sembunyikan tombol buat pengajuan baru %>
+          <div class="dash-card" style="border-left: 4px solid #28a745;">
+            <div class="dash-card-body" style="padding-top:1.25rem;">
+              <div style="display:flex;flex-direction:column;gap:0.75rem;">
+                <div style="display:flex;gap:1rem;flex-wrap:wrap;align-items:center;justify-content:space-between;">
+                  <div>
+                    <p style="margin:0;font-size:0.8125rem;color:var(--muted-foreground);">Nomor SK</p>
+                    <code style="font-size:0.9rem;font-weight:600;"><%= latest.request_number %></code>
+                  </div>
+                  <div>
+                    <p style="margin:0;font-size:0.8125rem;color:var(--muted-foreground);">Status</p>
+                    <span class="badge badge--green">Disetujui Final</span>
+                  </div>
+                  <div>
+                    <p style="margin:0;font-size:0.8125rem;color:var(--muted-foreground);">Tanggal Disetujui</p>
+                    <p style="margin:0;font-size:0.875rem;"><%= latest.updated_at ? new Date(latest.updated_at).toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'}) : '—' %></p>
+                  </div>
+                  <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                    <a href="/mahasiswa/submissions/<%= latest.id %>/pdf"
+                       class="btn-primary"
+                       style="display:inline-flex;align-items:center;gap:6px;font-size:0.875rem;text-decoration:none;">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                      Unduh SK (PDF)
+                    </a>
+                    <a href="/mahasiswa/submissions/<%= latest.id %>" class="btn-outline" style="font-size:0.875rem;text-decoration:none;">Lihat Detail</a>
+                  </div>
+                </div>
+                <p style="margin:0;font-size:0.8rem;color:#28a745;">
+                  ✓ Pengajuan pengunduran diri Anda telah disetujui secara resmi. SK dapat diunduh dan digunakan sebagai dokumen resmi.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <% } else if (latest.status === 3 || latest.status === 5) { %>
+          <%# Ditolak — tampilkan info penolakan + tombol ajukan ulang %>
+          <div class="dash-card" style="border-left: 4px solid #dc3545;">
+            <div class="dash-card-body" style="padding-top:1.25rem;">
+              <div style="display:flex;flex-direction:column;gap:0.75rem;">
+                <div style="display:flex;gap:1rem;flex-wrap:wrap;align-items:center;justify-content:space-between;">
+                  <div>
+                    <p style="margin:0;font-size:0.8125rem;color:var(--muted-foreground);">Nomor Pengajuan</p>
+                    <code style="font-size:0.9rem;font-weight:600;"><%= latest.request_number %></code>
+                  </div>
+                  <div>
+                    <p style="margin:0;font-size:0.8125rem;color:var(--muted-foreground);">Status</p>
+                    <span class="badge badge--red">Ditolak</span>
+                  </div>
+                  <div style="display:flex;gap:8px;">
+                    <a href="/mahasiswa/submissions/create"
+                       class="btn-primary"
+                       style="display:inline-flex;align-items:center;gap:6px;font-size:0.875rem;text-decoration:none;">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16m8-8H4"/></svg>
+                      Ajukan Ulang
+                    </a>
+                    <a href="/mahasiswa/submissions/<%= latest.id %>" class="btn-outline" style="font-size:0.875rem;text-decoration:none;">Lihat Alasan</a>
+                  </div>
+                </div>
+                <p style="margin:0;font-size:0.8rem;color:#dc3545;">
+                  Pengajuan Anda ditolak. Periksa alasan penolakan pada detail pengajuan, perbaiki dokumen, lalu ajukan kembali.
+                </p>
+              </div>
+            </div>
+          </div>
+
           <% } else { %>
+          <%# Aktif (Draft / Menunggu / Diproses) — tampilkan info pengajuan, tanpa tombol buat baru %>
           <div class="dash-card">
             <div class="dash-card-body" style="padding-top:1.25rem;">
               <div style="display:flex;flex-direction:column;gap:0.75rem;">

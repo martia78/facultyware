@@ -2,6 +2,17 @@
 <html lang="id">
   <head>
     <%- include('../../partials/head', { title: pageTitle }) %>
+    <style>
+      .approval-card { padding:.875rem 1rem; border-radius:.625rem; margin-bottom:.75rem; border-width:1.5px; border-style:solid; }
+      .approval-card--approved { background:#f0fff4; border-color:#28a745; }
+      .approval-card--rejected { background:#fff5f5; border-color:#dc3545; }
+      .approval-badge { font-size:.75rem; font-weight:700; color:white; padding:2px 8px; border-radius:99px; }
+      .approval-badge--green { background:#28a745; }
+      .approval-badge--red   { background:#dc3545; }
+      .approval-note { margin:.5rem 0 0; padding:.5rem .75rem; background:white; border-radius:.375rem; border-left-width:3px; border-left-style:solid; }
+      .approval-note--green { border-left-color:#28a745; }
+      .approval-note--red   { border-left-color:#dc3545; }
+    </style>
   </head>
   <body class="page-shell">
     <%- include('../../partials/sidebar') %>
@@ -396,17 +407,34 @@
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
               Riwayat Persetujuan
             </p>
-            <% history.forEach(h => { %>
-            <div style="padding:.75rem;border:1px solid var(--border);border-radius:.625rem;margin-bottom:.625rem;display:flex;gap:.75rem;flex-wrap:wrap;align-items:flex-start;">
-              <span class="badge badge--blue"><%= h.level %></span>
-              <div style="flex:1;min-width:0;">
-                <strong style="font-size:.9rem;"><%= h.approver_name || 'Unknown' %></strong>
-                <span style="font-size:.8rem;color:var(--muted-foreground);"> — <%= h.approval_position %></span>
-                <% if (h.approval_reason) { %><p style="margin:.25rem 0 0;font-size:.875rem;"><%= h.approval_reason %></p><% } %>
+            <% history.forEach(function(h) {
+              var isDitolak  = (h.status === 3 || h.status === 5);
+              var cardClass  = isDitolak ? 'approval-card--rejected' : 'approval-card--approved';
+              var levelLabel = h.level === 'kaprodi' ? 'Ketua Program Studi' : 'Wakil Dekan I';
+              var statusLabel= isDitolak ? 'Ditolak' : 'Disetujui';
+            %>
+            <div class="approval-card <%= cardClass %>">
+              <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:.5rem;">
+                <div>
+                  <span class="approval-badge <%= isDitolak ? 'approval-badge--red' : 'approval-badge--green' %>">
+                    <%= statusLabel %>
+                  </span>
+                  <span style="font-size:.75rem; font-weight:600; color:#555; margin-left:6px;"><%= levelLabel %></span>
+                </div>
+                <span style="font-size:.8rem; color:var(--muted-foreground);">
+                  <%= h.created_at ? new Date(h.created_at).toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'}) : '' %>
+                </span>
               </div>
-              <span style="font-size:.8rem;color:var(--muted-foreground);">
-                <%= h.created_at ? new Date(h.created_at).toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'}) : '' %>
-              </span>
+              <p style="margin:.5rem 0 0; font-size:.875rem; font-weight:600; color:#333;">
+                <%= h.approver_name || 'Unknown' %>
+              </p>
+              <% if (h.approval_reason) { %>
+              <div class="approval-note <%= isDitolak ? 'approval-note--red' : 'approval-note--green' %>">
+                <p style="margin:0; font-size:.8125rem; color:#444;">
+                  <strong>Catatan:</strong> <%= h.approval_reason %>
+                </p>
+              </div>
+              <% } %>
             </div>
             <% }) %>
           </div>

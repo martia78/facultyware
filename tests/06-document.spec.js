@@ -6,7 +6,7 @@ const { login, BASE_URL } = require('./helpers');
 
 // ── TC-DOC-01: Tombol Export SK PDF muncul setelah disetujui ─────────────
 test('TC-DOC-01: Tombol Export SK PDF hanya muncul pada pengajuan yang disetujui', async ({ page }) => {
-  await login(page, '2211521000', 'password123');
+  await login(page, '2211521000', 'Mhs@2211521000');
   await page.goto(`${BASE_URL}/mahasiswa/submissions`);
   const rows = page.locator('tbody tr');
   const count = await rows.count();
@@ -17,7 +17,7 @@ test('TC-DOC-01: Tombol Export SK PDF hanya muncul pada pengajuan yang disetujui
     const bodyText = await page.locator('body').textContent();
 
     if (bodyText?.includes('Disetujui')) {
-      await expect(page.locator('a[href*="/pdf"]')).toBeVisible();
+      await expect(page.locator('a[href*="/pdf"]').first()).toBeVisible();
     } else {
       // Belum disetujui, tombol PDF tidak boleh muncul
       const pdfLink = page.locator('a[href*="/pdf"]');
@@ -34,7 +34,7 @@ test('TC-DOC-02: Akses endpoint PDF tanpa login diarahkan ke halaman login', asy
 
 // ── TC-DOC-03: Akses PDF submission orang lain ditolak ───────────────────
 test('TC-DOC-03: Mahasiswa tidak dapat mengakses PDF milik mahasiswa lain', async ({ page }) => {
-  await login(page, '2211521000', 'password123');
+  await login(page, '2211521000', 'Mhs@2211521000');
   // Coba akses ID yang sangat besar (tidak ada)
   const res = await page.request.get(`${BASE_URL}/mahasiswa/submissions/99999/pdf`);
   expect([403, 404]).toContain(res.status());
@@ -42,7 +42,7 @@ test('TC-DOC-03: Mahasiswa tidak dapat mengakses PDF milik mahasiswa lain', asyn
 
 // ── TC-DOC-04: Upload dokumen hanya menerima PDF ─────────────────────────
 test('TC-DOC-04: Upload file non-PDF ditolak oleh sistem', async ({ page }) => {
-  await login(page, '2211521000', 'password123');
+  await login(page, '2211521000', 'Mhs@2211521000');
   await page.goto(`${BASE_URL}/mahasiswa/submissions/create`);
   const currentUrl = page.url();
   if (currentUrl.includes('edit') || !currentUrl.includes('create')) return;
@@ -66,7 +66,7 @@ test('TC-DOC-04: Upload file non-PDF ditolak oleh sistem', async ({ page }) => {
 
 // ── TC-DOC-05: Upload PDF berhasil menampilkan nama file ─────────────────
 test('TC-DOC-05: Upload PDF valid menampilkan nama file di dropzone', async ({ page }) => {
-  await login(page, '2211521000', 'password123');
+  await login(page, '2211521000', 'Mhs@2211521000');
   await page.goto(`${BASE_URL}/mahasiswa/submissions/create`);
   const currentUrl = page.url();
   if (currentUrl.includes('edit') || !currentUrl.includes('create')) return;
