@@ -12,6 +12,8 @@ const usersRouter = require('./routes/users');
 
 const app = express();
 
+app.set('trust proxy', 1); 
+
 // ─── View engine ───────────────────────────────────────────
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
