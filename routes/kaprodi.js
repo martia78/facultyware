@@ -7,7 +7,6 @@ const { rejectionRules, handleValidation } = require('../middlewares/validate');
 
 const isKaprodi = [isAuthenticated, authorize(['kaprodi'])];
 
-// Redirect /kaprodi (tanpa sub-halaman) ke dashboard, bukan 404
 router.get('/', (req, res) => res.redirect('/kaprodi/dashboard'));
 
 router.get('/dashboard', ...isKaprodi, kaprodiController.dashboard);

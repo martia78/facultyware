@@ -6,16 +6,12 @@ function flashError(req, msg)   { req.session.flash = { type: 'error',   message
 function flashSuccess(req, msg) { req.session.flash = { type: 'success', message: msg }; }
 function popFlash(req) { const f = req.session.flash || null; delete req.session.flash; return f; }
 
-// Cakupan akses Kaprodi: hanya pengajuan yang sudah lolos verifikasi Admin dan
-// berstatus Menunggu Verifikasi Kaprodi / Disetujui Kaprodi / Ditolak Kaprodi.
-// Draft (belum diajukan) dan tahap WD1 ke atas berada di luar wewenang Kaprodi.
 const KAPRODI_SCOPE = [
   model.STATUS.MENUNGGU_PRODI,
   model.STATUS.DISETUJUI_PRODI,
   model.STATUS.DITOLAK_PRODI,
 ];
 
-// GET /kaprodi/dashboard
 const dashboard = async (req, res, next) => {
   try {
     const stats = await model.getKaprodiStats();
@@ -38,7 +34,6 @@ const dashboard = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-// GET /kaprodi/submissions — Halaman Daftar Pengajuan
 const index = async (req, res, next) => {
   try {
     const { search = '', status = '', page = 1 } = req.query;
@@ -62,7 +57,6 @@ const index = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-// GET /kaprodi/submissions/:id — Halaman Detail Pengajuan
 const show = async (req, res, next) => {
   try {
     const submission = await model.getSubmissionById(req.params.id);
@@ -88,7 +82,6 @@ const show = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-// POST /kaprodi/submissions/:id/approve
 const approve = async (req, res, next) => {
   try {
     await model.approveByKaprodi(req.params.id, req.session.userId, '');
@@ -99,7 +92,6 @@ const approve = async (req, res, next) => {
   res.redirect('/kaprodi/dashboard');
 };
 
-// POST /kaprodi/submissions/:id/reject
 const reject = async (req, res, next) => {
   try {
     if (req.validationErrors && req.validationErrors.length) {
@@ -114,7 +106,6 @@ const reject = async (req, res, next) => {
   res.redirect('/kaprodi/dashboard');
 };
 
-// GET /kaprodi/submissions/:id/document — lihat/unduh Surat Permohonan PDF
 const viewDocument = async (req, res, next) => {
   try {
     const submission = await model.getSubmissionById(req.params.id);
@@ -133,7 +124,6 @@ const viewDocument = async (req, res, next) => {
 };
 
 
-// ── Profile & Change Password ─────────────────────────────────────────────────
 const profile = async (req, res, next) => {
   try {
     res.render('kaprodi/profile', {

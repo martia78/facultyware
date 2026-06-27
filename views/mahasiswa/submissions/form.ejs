@@ -480,7 +480,7 @@
         }
       }
 
-      // Drag-and-drop visual feedback untuk dropzone
+      
       document.querySelectorAll('.upload-dropzone').forEach((zone) => {
         ['dragenter', 'dragover'].forEach(evt => {
           zone.addEventListener(evt, (e) => { e.preventDefault(); zone.classList.add('upload-dropzone--drag'); });
@@ -497,7 +497,7 @@
         });
       });
 
-      // Client-side validation sebelum submit
+      
       document.getElementById('resignation-form')?.addEventListener('submit', function(e) {
         const reason = document.getElementById('reason');
         if (reason && !reason.hasAttribute('readonly') && !reason.value.trim()) {
@@ -508,7 +508,6 @@
         }
       });
 
-      // Counter karakter untuk textarea Alasan Pengunduran Diri (maks. 255)
       (() => {
         const reason  = document.getElementById('reason');
         const counter = document.getElementById('reason-counter');
@@ -519,7 +518,6 @@
         });
       })();
 
-      // Tombol "Ganti File" — sembunyikan info file lama, tampilkan area unggah baru.
       (() => {
         const btnGanti = document.getElementById('btn-ganti-file');
         const btnBatal = document.getElementById('btn-batal-ganti');
@@ -544,14 +542,14 @@
         }
       })();
 
-      // Dialog "Hapus Draft" — tombol konfirmasi hanya aktif setelah checkbox dicentang.
+      
       (() => {
         const checkbox = document.getElementById('confirm-delete-checkbox');
         const confirmBtn = document.getElementById('confirm-delete-btn');
         const dialog = document.getElementById('dialog-delete');
         if (!checkbox || !confirmBtn) return;
         checkbox.addEventListener('change', () => { confirmBtn.disabled = !checkbox.checked; });
-        // Reset checkbox setiap kali dialog dibuka kembali
+        
         if (dialog) {
           dialog.addEventListener('close', () => { checkbox.checked = false; confirmBtn.disabled = true; });
         }

@@ -1,28 +1,7 @@
 const db = require('../lib/db');
 
-/**
- * ACL khusus REST API (Postman / klien eksternal lainnya).
- * SUMBER IDENTITAS TUNGGAL: req.user, hasil decode JWT oleh middlewares/jwtAuth.js.
- * File ini TIDAK PERNAH membaca req.session — gunakan middlewares/acl.js untuk web.
- *
- * Urutan middleware di route API selalu:
- *   verifyJWT  →  authorizeApi(...) / checkPermissionApi(...)  →  controller
- *
- * Contoh penggunaan:
- *   router.get('/api/submissions',
- *     verifyJWT,
- *     authorizeApi(['admin', 'kaprodi', 'wd1']),
- *     controller.index);
- *
- *   router.post('/api/submissions',
- *     verifyJWT,
- *     checkPermissionApi('submission.create'),
- *     controller.create);
- */
-
 const denyApi = (res, status, message) => res.status(status).json({ success: false, message });
 
-// Cek ROLE — diutamakan baca langsung dari payload JWT (req.user.role) tanpa round-trip DB.
 const authorizeApi = (requiredRoles) => {
   const rolesArray = Array.isArray(requiredRoles) ? requiredRoles : [requiredRoles];
 
@@ -41,7 +20,6 @@ const authorizeApi = (requiredRoles) => {
   };
 };
 
-// Cek PERMISSION granular — query ke role_has_permissions berdasarkan req.user.id (dari JWT).
 const checkPermissionApi = (requiredPermissions) => {
   const permsArray = Array.isArray(requiredPermissions) ? requiredPermissions : [requiredPermissions];
 

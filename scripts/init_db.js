@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 
 async function init() {
   try {
-    // Create users table
+    
     await db.query(`
       CREATE TABLE IF NOT EXISTS users (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -14,7 +14,6 @@ async function init() {
     `);
     console.log('Users table created or already exists.');
 
-    // Check if admin user exists
     const [rows] = await db.query('SELECT * FROM users WHERE username = ?', ['admin']);
     if (rows.length === 0) {
       const hashedPassword = await bcrypt.hash('password', 10);

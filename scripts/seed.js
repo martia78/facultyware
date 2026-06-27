@@ -6,7 +6,6 @@ async function seed() {
   try {
     console.log('=== Memulai proses seeding ===\n');
 
-    // ─── 1. ROLES ───────────────────────────────────────────
     console.log('1. Membuat roles...');
     const roles = [
       { name: 'mahasiswa',  guard_name: 'web' },
@@ -29,23 +28,22 @@ async function seed() {
     const roleMap = {};
     roleRows.forEach(r => roleMap[r.name] = r.id);
 
-    // ─── 2. PERMISSIONS ─────────────────────────────────────
     console.log('\n2. Membuat permissions...');
     const permissions = [
-      // Mahasiswa
+  
       { name: 'submission.create',     guard_name: 'web' },
       { name: 'submission.view-own',   guard_name: 'web' },
       { name: 'submission.download',   guard_name: 'web' },
-      // Admin Akademik
+      
       { name: 'submission.view-all',   guard_name: 'web' },
       { name: 'submission.verify',     guard_name: 'web' },
       { name: 'submission.revise',     guard_name: 'web' },
       { name: 'student.manage',        guard_name: 'web' },
       { name: 'submission.export',     guard_name: 'web' },
-      // Kaprodi
+      
       { name: 'submission.approve-prodi',  guard_name: 'web' },
       { name: 'submission.reject-prodi',   guard_name: 'web' },
-      // wd1
+      
       { name: 'submission.approve-final',  guard_name: 'web' },
       { name: 'submission.reject-final',   guard_name: 'web' },
     ];
@@ -59,12 +57,10 @@ async function seed() {
     }
     console.log(`   ✓ ${permissions.length} permissions dibuat`);
 
-    // Ambil ID permissions
     const [permRows] = await db.query('SELECT id, name FROM permissions');
     const permMap = {};
     permRows.forEach(p => permMap[p.name] = p.id);
 
-    // ─── 3. ROLE HAS PERMISSIONS ────────────────────────────
     console.log('\n3. Memetakan permissions ke roles...');
     const rolePermissions = {
       mahasiswa: [
@@ -107,7 +103,6 @@ async function seed() {
       console.log(`   ✓ ${roleName}: ${perms.length} permissions`);
     }
 
-    // ─── 4. USERS ───────────────────────────────────────────
     console.log('\n4. Membuat user demo...');
     const users = [
       { username: 'mahasiswa01', password: 'password123', name: 'Budi Santoso',   email: 'budi@student.ac.id',   role: 'mahasiswa' },
@@ -119,7 +114,6 @@ async function seed() {
     for (const u of users) {
       const hash = await bcrypt.hash(u.password, 12);
 
-      // Cek user sudah ada
       const [existing] = await db.query(
         'SELECT id FROM users WHERE username = ?',
         [u.username]
@@ -139,7 +133,6 @@ async function seed() {
         console.log(`   ~ User "${u.username}" sudah ada, skip`);
       }
 
-      // Assign role ke user
       const roleId = roleMap[u.role];
       if (userId && roleId) {
         await db.query(
@@ -149,9 +142,8 @@ async function seed() {
       }
     }
 
-    // ─── 5. STUDENT DEMO ────────────────────────────────────
     console.log('\n5. Membuat data mahasiswa demo...');
-    // Ambil userId mahasiswa01
+  
     const [mahasiswaUser] = await db.query(
       'SELECT id FROM users WHERE username = ?',
       ['mahasiswa01']

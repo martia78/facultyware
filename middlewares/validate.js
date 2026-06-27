@@ -1,13 +1,11 @@
 const { validationResult, body } = require('express-validator');
 
-// Handler: kumpulkan error validasi dan kirim respons sesuai tipe request
 const handleValidation = (req, res, next) => {
   const errors = validationResult(req);
   if (errors.isEmpty()) return next();
 
   const errs = errors.array();
 
-  // Untuk API request — kembalikan JSON
   if (req.path.startsWith('/api/') || req.headers.accept?.includes('application/json')) {
     return res.status(422).json({
       success: false,
@@ -16,19 +14,15 @@ const handleValidation = (req, res, next) => {
     });
   }
 
-  // Untuk web request — simpan di req.validationErrors agar controller bisa render ulang
   req.validationErrors = errs;
   next();
 };
 
-// Rules: Login
 const loginRules = [
   body('username').trim().notEmpty().withMessage('Username wajib diisi.'),
   body('password').notEmpty().withMessage('Password wajib diisi.'),
 ];
 
-// Rules: Submission (server-side) — sesuai dokumen fitur "Pengajuan Pengunduran Diri"
-// (Validasi Pengajuan §"Data Wajib") dan KETENTUAN_PROJECT §8 (wajib pakai express-validator).
 const submissionRules = [
   body('reason')
     .trim()
@@ -54,7 +48,6 @@ const submissionRules = [
     .isInt({ min: 0 }).withMessage('Jumlah SKS harus berupa angka positif.'),
 ];
 
-// Rules: User create/update
 const userCreateRules = [
   body('username').trim().notEmpty().withMessage('Username wajib diisi.')
     .isLength({ min: 3, max: 50 }).withMessage('Username 3–50 karakter.')
@@ -77,7 +70,6 @@ const userUpdateRules = [
     .isLength({ min: 6 }).withMessage('Password minimal 6 karakter.'),
 ];
 
-// Rules: Persetujuan (catatan penolakan wajib)
 const rejectionRules = [
   body('note').trim().notEmpty().withMessage('Alasan penolakan wajib diisi.')
     .isLength({ min: 3 }).withMessage('Alasan penolakan minimal 3 karakter.'),

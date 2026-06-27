@@ -3,7 +3,6 @@ const fs    = require('fs');
 const model = require('../lib/submissionModel');
 const { MAX_APPLICATION_LETTER_SIZE } = require('../lib/uploadConfig');
 
-// ─── Helper respons konsisten {success, message, data} ───────────────────────
 const ok      = (res, message, data = {}, status = 200) => res.status(status).json({ success: true, message, data });
 const fail    = (res, status, message, extra = {}) => res.status(status).json({ success: false, message, ...extra });
 
@@ -13,13 +12,9 @@ function deleteUploadedFile(file) {
   if (fs.existsSync(fp)) { try { fs.unlinkSync(fp); } catch (e) { /* abaikan */ } }
 }
 
-// Cakupan akses per role (sama dengan yang dipakai versi web — lihat
-// controllers/submissionController.js & kaprodiController.js)
 const KAPRODI_SCOPE = [model.STATUS.MENUNGGU_PRODI, model.STATUS.DISETUJUI_PRODI, model.STATUS.DITOLAK_PRODI];
 const WD1_SCOPE     = [model.STATUS.DISETUJUI_PRODI, model.STATUS.DISETUJUI_FINAL, model.STATUS.DITOLAK_FINAL];
 
-// Pastikan req.user (role tertentu) berhak melihat `submission` ini.
-// Return true/false — pemanggil yang menentukan respons 403/404.
 function canView(user, submission) {
   if (!submission) return false;
   switch (user.role) {
@@ -31,8 +26,7 @@ function canView(user, submission) {
   }
 }
 
-// ─── GET /api/submissions ─────────────────────────────────────────────────────
-const index = async (req, res, next) => {
+const index =  (req, res, next) => {
   try {
     const { search = '', status = '', page = 1 } = req.query;
     const limit = Math.min(parseInt(req.query.limit, 10) || 10, 100);
@@ -69,7 +63,6 @@ const index = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-// ─── GET /api/submissions/:id ─────────────────────────────────────────────────
 const show = async (req, res, next) => {
   try {
     const submission = await model.getSubmissionById(req.params.id);
@@ -81,12 +74,10 @@ const show = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-// ─── POST /api/submissions (mahasiswa) ────────────────────────────────────────
 const store = async (req, res, next) => {
   try {
     const appLetterFile = req.files?.application_letter?.[0] || null;
 
-    // Ketentuan Pengajuan Ganda
     const active = await model.getActiveSubmission(req.user.id);
     if (active) {
       deleteUploadedFile(appLetterFile);
@@ -125,7 +116,6 @@ const store = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-// ─── PUT /api/submissions/:id (mahasiswa, draft only) ─────────────────────────
 const update = async (req, res, next) => {
   try {
     const appLetterFile = req.files?.application_letter?.[0] || null;
@@ -164,7 +154,6 @@ const update = async (req, res, next) => {
   }
 };
 
-// ─── DELETE /api/submissions/:id (mahasiswa, draft only) ──────────────────────
 const destroy = async (req, res, next) => {
   try {
     await model.deleteSubmission(req.params.id, req.user.id);
@@ -175,12 +164,6 @@ const destroy = async (req, res, next) => {
   }
 };
 
-// ─── PATCH /api/submissions/:id/status ─────────────────────────────────────────
-// Body: { status: <int>, note?: <string> }
-// Satu endpoint generik untuk SEMUA transisi status, sesuai peran token JWT:
-//   mahasiswa -> Draft(0) => Menunggu Prodi(1)            [submit]
-//   kaprodi   -> Menunggu Prodi(1) => Disetujui(2)/Ditolak(3)
-//   wd1       -> Disetujui Prodi(2) => Disetujui Final(4)/Ditolak Final(5)
 const updateStatus = async (req, res, next) => {
   try {
     const id = req.params.id;
@@ -232,7 +215,6 @@ const updateStatus = async (req, res, next) => {
         return fail(res, 403, 'Role Anda tidak memiliki izin mengubah status pengajuan.');
       }
     } catch (modelErr) {
-      // Error dari model (mis. race condition, status sudah berubah duluan)
       return fail(res, 400, modelErr.message || 'Gagal mengubah status pengajuan.');
     }
 

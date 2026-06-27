@@ -36,7 +36,6 @@
     const COLLAPSED_KEY = 'sidebar_collapsed';
     const isDesktop = () => window.innerWidth >= 1024;
 
-    // Restore state dari localStorage
     const collapsed = localStorage.getItem(COLLAPSED_KEY) === 'true';
     if (isDesktop() && collapsed) {
       sidebar.classList.add('app-sidebar--collapsed');
@@ -50,12 +49,12 @@
 
     btn.addEventListener('click', () => {
       if (isDesktop()) {
-        // Desktop: collapse/expand
+        
         const isCollapsed = sidebar.classList.toggle('app-sidebar--collapsed');
         main?.classList.toggle('app-main--sidebar-collapsed', isCollapsed);
         localStorage.setItem(COLLAPSED_KEY, isCollapsed);
       } else {
-        // Mobile: open/close overlay
+        
         const isOpen = sidebar.classList.toggle('app-sidebar--mobile-open');
         overlay?.classList.toggle('mobile-menu-overlay--open', isOpen);
       }

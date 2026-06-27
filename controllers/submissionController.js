@@ -7,8 +7,6 @@ function flashError(req, msg)   { req.session.flash = { type: 'error',   message
 function flashSuccess(req, msg) { req.session.flash = { type: 'success', message: msg }; }
 function popFlash(req) { const f = req.session.flash || null; delete req.session.flash; return f; }
 
-// Normalisasi error express-validator ({ path, msg, ... }) ke bentuk yang
-// dipakai view ({ field, msg }).
 function normalizeValidationErrors(req) {
   return (req.validationErrors || []).map(e => ({ field: e.path, msg: e.msg }));
 }
@@ -35,7 +33,6 @@ function renderForm(res, options) {
   });
 }
 
-// GET /mahasiswa/submissions
 const index = async (req, res, next) => {
   try {
     const { search = '', page = 1 } = req.query;
@@ -59,10 +56,8 @@ const index = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-// GET /mahasiswa/submissions/create
 const createForm = async (req, res, next) => {
   try {
-    // Blokir jika sudah ada pengajuan yang disetujui final — tidak perlu ajukan lagi
     const { rows: allSubmissions } = await model.getSubmissionsByStudentId(req.session.userId, { limit: 5 });
     const approved = allSubmissions.find(s => s.status === model.STATUS.DISETUJUI_FINAL);
     if (approved) {
@@ -70,16 +65,12 @@ const createForm = async (req, res, next) => {
       return res.redirect('/mahasiswa/dashboard');
     }
 
-    // Ketentuan Pengajuan Ganda: cek dulu apakah masih ada pengajuan aktif.
     const active = await model.getActiveSubmission(req.session.userId);
     if (active) {
       if (active.status === model.STATUS.DRAFT) {
-        // Draft yang belum selesai diisi → arahkan lanjut mengedit draft itu,
-        // bukan membuat draft baru yang terpisah.
         flashError(req, 'Anda masih memiliki Draft pengajuan yang belum diajukan. Lanjutkan mengisi draft tersebut terlebih dahulu.');
         return res.redirect(`/mahasiswa/submissions/${active.id}/edit`);
       }
-      // Menunggu Verifikasi Kaprodi / Diproses WD I → diblokir total sampai selesai/ditolak.
       flashError(req, `Anda masih memiliki pengajuan aktif (${model.STATUS_LABEL[active.status]}). Tidak dapat membuat pengajuan baru sampai proses sebelumnya selesai atau ditolak.`);
       return res.redirect(`/mahasiswa/submissions/${active.id}`);
     }
@@ -97,13 +88,9 @@ const createForm = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-// POST /mahasiswa/submissions
 const store = async (req, res, next) => {
   try {
     const appLetterFile = req.files?.application_letter?.[0] || null;
-
-    // Ketentuan Pengajuan Ganda — cek ulang di server (race-condition safety),
-    // jangan percaya penuh pada guard di createForm.
     const active = await model.getActiveSubmission(req.session.userId);
     if (active) {
       if (appLetterFile) deleteUploadedFiles([appLetterFile]);
@@ -156,7 +143,6 @@ const store = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-// GET /mahasiswa/submissions/:id
 const show = async (req, res, next) => {
   try {
     const submission = await model.getSubmissionById(req.params.id, req.session.userId);
@@ -172,13 +158,11 @@ const show = async (req, res, next) => {
       currentPath: '/mahasiswa/submissions',
       action: `/mahasiswa/submissions/${submission.id}`,
       student, submission, flash, history, timeline,
-      readonly: true, // Halaman detail SELALU readonly — field tidak boleh diketik di sini.
-                       // Tombol aksi (Ajukan/Edit/Hapus) diatur terpisah oleh submission.status di view.
+      readonly: true,
     });
   } catch (err) { next(err); }
 };
 
-// GET /mahasiswa/submissions/:id/edit
 const editForm = async (req, res, next) => {
   try {
     const submission = await model.getSubmissionById(req.params.id, req.session.userId);
@@ -198,7 +182,6 @@ const editForm = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-// POST /mahasiswa/submissions/:id (update)
 const update = async (req, res, next) => {
   try {
     const appLetterUpload = req.files?.application_letter?.[0] || null;
@@ -248,7 +231,6 @@ const update = async (req, res, next) => {
   }
 };
 
-// POST /mahasiswa/submissions/:id/submit
 const submit = async (req, res, next) => {
   try {
     await model.submitSubmission(req.params.id, req.session.userId);
@@ -262,7 +244,6 @@ const submit = async (req, res, next) => {
   }
 };
 
-// POST /mahasiswa/submissions/:id/delete
 const destroy = async (req, res, next) => {
   try {
     await model.deleteSubmission(req.params.id, req.session.userId);
@@ -274,9 +255,6 @@ const destroy = async (req, res, next) => {
   }
 };
 
-// GET /mahasiswa/submissions/:id/document — lihat/unduh Surat Permohonan
-// (akses terproteksi ACL, BUKAN lewat static /uploads publik, sesuai
-// KETENTUAN_PROJECT §6: ACL wajib diterapkan pada Download Dokumen.)
 const viewDocument = async (req, res, next) => {
   try {
     const submission = await model.getSubmissionById(req.params.id, req.session.userId);

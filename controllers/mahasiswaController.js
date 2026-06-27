@@ -5,9 +5,6 @@ const PDFDocument = require('pdfkit');
 
 function popFlash(req) { const f = req.session.flash || null; delete req.session.flash; return f; }
 
-// Kata ringkas untuk angka besar di kartu "Status Pengajuan" — terpisah dari
-// STATUS_LABEL (yang dipakai di badge & tabel) supaya tidak mengubah teks
-// yang sudah dipakai di halaman/role lain.
 const STATUS_HEADLINE = {
   0: 'Draft',
   1: 'Pending',
@@ -17,7 +14,6 @@ const STATUS_HEADLINE = {
   5: 'Ditolak',
 };
 
-// Tahap aktif saat ini, dipakai di kolom "Tahap Saat Ini" pada tabel riwayat.
 const CURRENT_STAGE = {
   0: 'Belum Diajukan',
   1: 'Verifikasi Kaprodi',
@@ -27,16 +23,11 @@ const CURRENT_STAGE = {
   5: 'Selesai (Ditolak)',
 };
 
-// GET /mahasiswa/dashboard
 const dashboard = async (req, res, next) => {
   try {
     const student = await model.getStudentByUserId(req.session.userId);
     const { rows: submissions, total } = await model.getSubmissionsByStudentId(req.session.userId, { limit: 100 });
 
-    // "latest" = pengajuan yang paling relevan ditampilkan di kartu status:
-    // - Jika ada pengajuan aktif (Draft/Menunggu/Diproses) → tampilkan itu
-    // - Jika tidak ada aktif tapi ada yang sudah final → tampilkan yang terakhir
-    //   (supaya tombol Unduh SK dan info status akhir tetap terlihat)
     const active  = submissions.find(s => model.ACTIVE_STATUSES.includes(s.status)) || null;
     const latest  = active || submissions[0] || null;
     const recent3 = submissions.slice(0, 3);
@@ -60,7 +51,6 @@ const dashboard = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-// GET /mahasiswa/profile
 const profile = async (req, res, next) => {
   try {
     const student = await model.getStudentByUserId(req.session.userId);
@@ -75,7 +65,6 @@ const profile = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-// GET /mahasiswa/submissions/:id/pdf
 const exportPDF = async (req, res, next) => {
   try {
     const submission = await model.getSubmissionById(req.params.id, req.session.userId);
@@ -100,7 +89,6 @@ const exportPDF = async (req, res, next) => {
     res.setHeader('Content-Disposition', `attachment; filename="SK-${submission.request_number}.pdf"`);
     doc.pipe(res);
 
-    // ── KOP SURAT ────────────────────────────────────────────────────────────
     const logoSize = 58;
     const kopY     = 40;
     const textX    = marginL + logoSize + 10;
@@ -121,7 +109,6 @@ const exportPDF = async (req, res, next) => {
     doc.moveTo(marginL, lineY + 3.5).lineTo(pageW - marginR, lineY + 3.5).lineWidth(0.5).stroke('#000');
     doc.lineWidth(1).fillColor('#000');
 
-    // ── JUDUL ────────────────────────────────────────────────────────────────
     doc.y = lineY + 14;
     doc.font('Helvetica-Bold').fontSize(12).text('SURAT KEPUTUSAN PENGUNDURAN DIRI MAHASISWA', marginL, doc.y, { width: contentW, align: 'center' });
     doc.font('Helvetica').fontSize(9).text(`Nomor: ${submission.request_number}`, marginL, doc.y + 2, { width: contentW, align: 'center' });
@@ -131,7 +118,6 @@ const exportPDF = async (req, res, next) => {
     doc.lineWidth(1);
     doc.y = judulLineY + 10;
 
-    // ── HELPER ───────────────────────────────────────────────────────────────
     const col1W = 130, col2W = contentW - col1W;
 
     const row = (label, value, bold = false) => {
@@ -150,26 +136,23 @@ const exportPDF = async (req, res, next) => {
       doc.y += 6;
     };
 
-    // ── DATA MAHASISWA ───────────────────────────────────────────────────────
     section('DATA MAHASISWA');
     row('Nama Mahasiswa', submission.student_name || '—');
     row('NIM', submission.student_nim || '—');
     row('Program Studi', submission.department_name || '—');
 
-    // ── DATA PENGAJUAN ───────────────────────────────────────────────────────
     section('DATA PENGAJUAN');
     row('Nomor Pengajuan', submission.request_number);
     row('Tanggal Pengajuan', fmt(submission.requested_at));
     row('Alasan Pengunduran Diri', submission.reason || '—');
 
-    // ── RIWAYAT PERSETUJUAN ──────────────────────────────────────────────────
     section('RIWAYAT PERSETUJUAN');
     row('Disetujui Kaprodi', kaprodiApproval ? `${kaprodiApproval.approver_name || 'Kaprodi'} — ${fmt(kaprodiApproval.created_at)}` : '—');
     row('Disetujui WD I', dekanApproval ? `${dekanApproval.approver_name || 'Wakil Dekan I'} — ${fmt(dekanApproval.created_at)}` : '—');
     if (dekanApproval?.approval_reason) row('Catatan WD I', dekanApproval.approval_reason);
     row('Status Akhir', 'DISETUJUI', true);
 
-    // ── TANDA TANGAN (posisi absolut agar tidak meluber ke hal. 2) ───────────
+
     const ttdY = pageH - 220;
     const ttdX = pageW - marginR - 170;
     doc.font('Helvetica').fontSize(9.5)
@@ -189,8 +172,6 @@ const exportPDF = async (req, res, next) => {
   } catch (err) { next(err); }
 };
 
-
-// POST /mahasiswa/profile/change-password
 const changePassword = async (req, res, next) => {
   try {
     const { current_password, new_password, confirm_password } = req.body;

@@ -2,13 +2,13 @@ const pool   = require('../lib/db');
 const bcrypt = require('bcryptjs');
 const model  = require('../lib/submissionModel');
 
-// ── Helper: error handling terpusat ──────────────────────────────────────────
+
 function handleError(res, next, err, message) {
   console.error(message, err);
   next(err);
 }
 
-// 1. Dashboard
+
 exports.getDashboard = async (req, res, next) => {
   try {
     const searchQuery = req.query.search || '';
@@ -37,8 +37,7 @@ exports.getDashboard = async (req, res, next) => {
   } catch (err) { handleError(res, next, err, 'Admin Dashboard Error:'); }
 };
 
-// 2. User Management (Read)
-// Auto-sync DIHAPUS dari sini — sinkronisasi student dilakukan di addUser saja.
+
 exports.getUsers = async (req, res, next) => {
   try {
     const [users] = await pool.query(`
@@ -62,7 +61,7 @@ exports.getUsers = async (req, res, next) => {
   } catch (err) { handleError(res, next, err, 'Error loading users:'); }
 };
 
-// 3. User Management (Create)
+
 exports.addUser = async (req, res, next) => {
   const conn = await pool.getConnection();
   try {
@@ -112,8 +111,7 @@ exports.addUser = async (req, res, next) => {
   }
 };
 
-// 4. User Management (Delete)
-// Hapus semua data terkait user dalam satu transaksi untuk menghindari orphaned data.
+
 exports.deleteUser = async (req, res, next) => {
   const conn = await pool.getConnection();
   try {
@@ -121,20 +119,20 @@ exports.deleteUser = async (req, res, next) => {
 
     const userId = req.params.id;
 
-    // Hapus detail resignation terlebih dahulu (child dari student_requests)
+    
     await conn.query(`
       DELETE srr FROM student_request_resignation srr
       JOIN student_requests sr ON sr.id = srr.student_requests_id
       WHERE sr.requested_by = ?
     `, [userId]);
 
-    // Hapus semua pengajuan milik mahasiswa ini
+    
     await conn.query(
       'DELETE FROM student_requests WHERE requested_by = ?',
       [userId]
     );
 
-    // Hapus data student, role, lalu user utama
+    
     await conn.query('DELETE FROM students WHERE id = ?', [userId]);
     await conn.query('DELETE FROM user_has_roles WHERE user_id = ?', [userId]);
     await conn.query('DELETE FROM users WHERE id = ?', [userId]);
@@ -149,7 +147,7 @@ exports.deleteUser = async (req, res, next) => {
   }
 };
 
-// 5. Data Mahasiswa
+
 exports.getStudents = async (req, res, next) => {
   try {
     const search = req.query.search || '';
@@ -189,7 +187,7 @@ exports.getStudents = async (req, res, next) => {
   } catch (err) { handleError(res, next, err, 'Error loading students:'); }
 };
 
-// 6. Reset Password User (oleh admin)
+
 exports.resetPassword = async (req, res, next) => {
   try {
     const bcrypt   = require('bcryptjs');

@@ -4,11 +4,6 @@ const db     = require('../lib/db');
 
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '8h';
 
-/**
- * POST /api/auth/login
- * Body: { username, password }
- * Response: { success, message, data: { token, user } }
- */
 const login = async (req, res, next) => {
   const { username, password } = req.body;
 
@@ -81,13 +76,6 @@ const login = async (req, res, next) => {
   }
 };
 
-/**
- * POST /api/auth/logout
- * JWT bersifat stateless, sehingga "logout" di sisi server hanya bersifat
- * informatif — client (Postman / aplikasi lain) wajib membuang token yang
- * tersimpan di sisi mereka. Endpoint ini tetap memerlukan token valid
- * (lewat middleware verifyJWT) agar konsisten dengan ketentuan soal.
- */
 const logout = (req, res) => {
   return res.status(200).json({
     success: true,
@@ -96,11 +84,6 @@ const logout = (req, res) => {
   });
 };
 
-/**
- * GET /api/auth/me
- * Mengembalikan identitas pemilik token saat ini — berguna untuk
- * memverifikasi token di Postman tanpa perlu memanggil endpoint lain.
- */
 const me = (req, res) => {
   return res.status(200).json({
     success: true,

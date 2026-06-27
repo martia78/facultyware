@@ -3,7 +3,6 @@ const model = require('../lib/submissionModel');
 
 exports.getDashboard = async (req, res, next) => {
   try {
-    // Gunakan konstanta STATUS dari model, bukan angka hardcoded
     const S = model.STATUS;
 
     const [[{ menunggu }]]  = await pool.query(
@@ -52,7 +51,6 @@ exports.approveRequest = async (req, res, next) => {
     req.session.flash = { type: 'success', message: 'Pengajuan berhasil disetujui dan SK diterbitkan.' };
     res.redirect('/wd1');
   } catch (err) {
-    // Error bisnis (mis. status sudah berubah) → flash error, jangan crash
     req.session.flash = { type: 'error', message: err.message || 'Gagal menyetujui pengajuan.' };
     res.redirect(`/wd1`);
   }
@@ -74,7 +72,6 @@ exports.rejectRequest = async (req, res, next) => {
   }
 };
 
-// ── Profile & Change Password ─────────────────────────────────────────────────
 exports.profile = async (req, res, next) => {
   try {
     res.render('wd1/profile', {

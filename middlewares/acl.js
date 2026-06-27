@@ -1,15 +1,6 @@
 const db = require('../lib/db');
 
-/**
- * Middleware ACL — cek apakah user memiliki permission yang dibutuhkan.
- * Mendukung satu permission (string) atau beberapa (array) — cukup salah satu yang cocok.
- *
- * Contoh penggunaan:
- *   router.get('/submissions', isAuthenticated, checkPermission('submission.view-all'), handler);
- *   router.post('/submissions', isAuthenticated, authorize(['mahasiswa']), handler);
- */
 
-// Cek berdasarkan PERMISSION name
 const checkPermission = (requiredPermissions) => {
   return async (req, res, next) => {
     if (!req.session || !req.session.userId) {
@@ -43,7 +34,6 @@ const checkPermission = (requiredPermissions) => {
   };
 };
 
-// Cek berdasarkan ROLE name (alias praktis sesuai ketentuan soal)
 const authorize = (requiredRoles) => {
   return async (req, res, next) => {
     if (!req.session || !req.session.userId) {
