@@ -67,7 +67,7 @@ exports.addUser = async (req, res, next) => {
   try {
     await conn.beginTransaction();
 
-    const { username, name, password } = req.body;
+    const { username, name, password, role_id } = req.body;
     // THE FIX: Catch the dropdown no matter if it's named 'role' or 'role_id'
     const formRole = req.body.role || req.body.role_id; 
 
@@ -80,10 +80,10 @@ exports.addUser = async (req, res, next) => {
     const newUserId = result.insertId;
 
     // Resolve formRole (bisa berupa angka atau nama role)
-    let resolvedRoleId = parseInt(formRole, 10);
+    let resolvedRoleId = parseInt(role_id, 10);
     if (isNaN(resolvedRoleId)) {
       const [[r]] = await conn.query('SELECT id FROM roles WHERE name = ?', [formRole]);
-      if (!r) throw new Error(`Role '${formRole}' tidak ditemukan.`);
+      if (!r) throw new Error(`Role '${role_id}' tidak ditemukan.`);
       resolvedRoleId = r.id;
     }
     await conn.query(

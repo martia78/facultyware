@@ -26,7 +26,7 @@ function canView(user, submission) {
   }
 }
 
-const index =  (req, res, next) => {
+const index =  async (req, res, next) => {
   try {
     const { search = '', status = '', page = 1 } = req.query;
     const limit = Math.min(parseInt(req.query.limit, 10) || 10, 100);
