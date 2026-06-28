@@ -68,7 +68,7 @@ exports.addUser = async (req, res, next) => {
     await conn.beginTransaction();
 
     const { username, name, password } = req.body;
-
+    // THE FIX: Catch the dropdown no matter if it's named 'role' or 'role_id'
     const formRole = req.body.role || req.body.role_id; 
 
     const hashedPassword = await bcrypt.hash(password.trim(), 12);
@@ -79,7 +79,7 @@ exports.addUser = async (req, res, next) => {
     );
     const newUserId = result.insertId;
 
-
+    // Resolve formRole (bisa berupa angka atau nama role)
     let resolvedRoleId = parseInt(formRole, 10);
     if (isNaN(resolvedRoleId)) {
       const [[r]] = await conn.query('SELECT id FROM roles WHERE name = ?', [formRole]);
@@ -91,7 +91,7 @@ exports.addUser = async (req, res, next) => {
       [newUserId, resolvedRoleId]
     );
 
-   
+    // Jika mahasiswa, insert ke tabel students dalam transaksi yang sama
     const [[roleRow]] = await conn.query('SELECT name FROM roles WHERE id = ?', [resolvedRoleId]);
     if (roleRow && roleRow.name === 'mahasiswa') {
       const [[dept]] = await conn.query(
